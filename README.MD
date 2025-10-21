@@ -9,6 +9,7 @@ glua 基于 [gopher-lua](https://github.com/yuin/gopher-lua) 二次开发，在�
 | 模块名称                 | 模块介绍     |
 | ------------------------ | ------------ |
 | [base](docs/base.md)     | base 编解码  |
+| [cron](docs/cron.md)     | 计划任务     |
 | [crypto](docs/crypto.md) | 加解密       |
 | [format](docs/format.md) | 格式化字符串 |
 | [http](docs/http.md)     | http 请求    |
