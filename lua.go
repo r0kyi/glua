@@ -2,6 +2,7 @@ package glua
 
 import (
 	"github.com/r0kyi/glua/plugin/base"
+	"github.com/r0kyi/glua/plugin/cron"
 	"github.com/r0kyi/glua/plugin/crypto"
 	"github.com/r0kyi/glua/plugin/format"
 	"github.com/r0kyi/glua/plugin/http"
@@ -19,6 +20,7 @@ func NewState() *lua.LState {
 	table := L.NewTable()
 
 	table.RawSetString("base", base.Preload(L))
+	table.RawSetString("cron", cron.Preload(L))
 	table.RawSetString("crypto", crypto.Preload(L))
 	table.RawSetString("format", format.Preload(L))
 	table.RawSetString("http", http.Preload(L))
