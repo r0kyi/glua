@@ -14,6 +14,7 @@ glua 基于 [gopher-lua](https://github.com/yuin/gopher-lua) 二次开发，在�
 | [format](docs/format.md) | 格式化字符串 |
 | [http](docs/http.md)     | http 请求    |
 | [json](docs/json.md)     | json 解析    |
+| [jwt](docs/jwt.md)       | jwt 解析     |
 | [re](docs/re.md)         | 正则         |
 | [time](docs/time.md)     | 时间         |
 | [web](docs/web.md)       | web 服务     |
