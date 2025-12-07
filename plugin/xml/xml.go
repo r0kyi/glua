@@ -7,7 +7,7 @@ import (
 
 type Xml struct {
 	raw string
-	xml map[string]interface{}
+	xml map[string]any
 }
 
 func (x *Xml) encode() error {

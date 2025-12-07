@@ -8,7 +8,7 @@ import (
 
 type Json struct {
 	raw  string
-	json map[string]interface{}
+	json map[string]any
 }
 
 func (j *Json) encode() error {

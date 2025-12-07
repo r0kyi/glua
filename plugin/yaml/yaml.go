@@ -7,7 +7,7 @@ import (
 
 type Yaml struct {
 	raw  string
-	yaml map[string]interface{}
+	yaml map[string]any
 }
 
 func (y *Yaml) encode() error {

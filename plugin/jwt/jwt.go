@@ -11,7 +11,7 @@ type JWT struct {
 	key string
 	alg string
 	raw string
-	jwt map[string]interface{}
+	jwt map[string]any
 }
 
 func (j *JWT) sign() error {
@@ -28,7 +28,7 @@ func (j *JWT) sign() error {
 }
 
 func (j *JWT) verify() error {
-	token, err := jwt.Parse(j.raw, func(_ *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(j.raw, func(_ *jwt.Token) (any, error) {
 		return core.S2B(j.key), nil
 	})
 	if err != nil {

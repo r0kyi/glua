@@ -7,13 +7,13 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-func MapToLTable(L *lua.LState, m interface{}) *lua.LTable {
+func MapToLTable(L *lua.LState, m any) *lua.LTable {
 	tbl := L.NewTable()
 	convertMapToLTable(L, tbl, m)
 	return tbl
 }
 
-func convertMapToLTable(L *lua.LState, tbl *lua.LTable, m interface{}) {
+func convertMapToLTable(L *lua.LState, tbl *lua.LTable, m any) {
 	if m == nil {
 		return
 	}
@@ -30,7 +30,7 @@ func convertMapToLTable(L *lua.LState, tbl *lua.LTable, m interface{}) {
 	}
 }
 
-func toLValue(L *lua.LState, val interface{}) lua.LValue {
+func toLValue(L *lua.LState, val any) lua.LValue {
 	if val == nil {
 		return lua.LNil
 	}

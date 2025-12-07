@@ -8,7 +8,7 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-func LTableToStrut(tbl *lua.LTable, out interface{}) error {
+func LTableToStrut(tbl *lua.LTable, out any) error {
 	v := reflect.ValueOf(out)
 	if v.Kind() != reflect.Ptr || v.IsNil() {
 		return fmt.Errorf("out must be a non-nil pointer to struct")
@@ -179,8 +179,8 @@ func lValueToGo(val lua.LValue) any {
 	case lua.LString:
 		return string(v)
 	case *lua.LTable:
-		arr := make([]interface{}, 0)
-		m := make(map[string]interface{})
+		arr := make([]any, 0)
+		m := make(map[string]any)
 		isArray := true
 
 		v.ForEach(func(key, value lua.LValue) {
