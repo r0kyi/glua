@@ -13,6 +13,14 @@ func MapToLTable(L *lua.LState, m any) *lua.LTable {
 	return tbl
 }
 
+func SliceMapToLTable(L *lua.LState, slice []map[string]any) *lua.LTable {
+	tbl := L.NewTable()
+	for _, m := range slice {
+		tbl.Append(MapToLTable(L, m))
+	}
+	return tbl
+}
+
 func convertMapToLTable(L *lua.LState, tbl *lua.LTable, m any) {
 	if m == nil {
 		return
