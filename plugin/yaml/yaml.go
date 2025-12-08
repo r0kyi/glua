@@ -2,7 +2,7 @@ package yaml
 
 import (
 	"github.com/goccy/go-yaml"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 )
 
 type Yaml struct {
@@ -15,13 +15,13 @@ func (y *Yaml) encode() error {
 	if err != nil {
 		return err
 	}
-	y.raw = core.B2S(marshal)
+	y.raw = B2S(marshal)
 
 	return nil
 }
 
 func (y *Yaml) decode() error {
-	err := yaml.Unmarshal(core.S2B(y.raw), &y.yaml)
+	err := yaml.Unmarshal(S2B(y.raw), &y.yaml)
 	if err != nil {
 		return err
 	}

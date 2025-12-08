@@ -1,12 +1,14 @@
 package http
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (r *Response) String() string {
-	return "http.response"
+	return fmt.Sprintf("glua.http.response: %p", r)
 }
 
 func (r *Response) AssertFunction() lua.LGFunction {
@@ -22,7 +24,7 @@ func (r *Response) Index(L *lua.LState, key string) lua.LValue {
 	case "status_code":
 		return lua.LNumber(r.statusCode)
 	case "headers":
-		return core.MapToLTable(L, r.headers)
+		return MapToLTable(L, r.headers)
 	case "body":
 		return lua.LString(r.body)
 	default:

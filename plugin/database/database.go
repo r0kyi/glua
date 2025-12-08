@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 )
 
 type DataBase struct {
@@ -60,7 +60,7 @@ func (db *DataBase) query(query string, args []any) ([]map[string]any, error) {
 		for i, col := range cols {
 			v := values[i]
 			if b, ok := v.([]byte); ok {
-				row[col] = core.B2S(b)
+				row[col] = B2S(b)
 			} else {
 				row[col] = v
 			}

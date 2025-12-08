@@ -3,7 +3,7 @@ package re
 import (
 	"regexp"
 
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 )
 
 type Re struct {
@@ -23,7 +23,7 @@ func (r *Re) compile() error {
 }
 
 func (r *Re) matchString() bool {
-	return r.regexp.Match(core.S2B(r.src))
+	return r.regexp.Match(S2B(r.src))
 }
 
 func (r *Re) findString() string {

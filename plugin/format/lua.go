@@ -1,12 +1,14 @@
 package format
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (f *Format) String() string {
-	return f.toString()
+	return fmt.Sprintf(f.format, f.args...)
 }
 
 func (f *Format) AssertFunction() lua.LGFunction {
@@ -38,7 +40,7 @@ func NewFormatL(L *lua.LState) int {
 	}
 
 	f := &Format{format: format, args: args}
-	ud := core.NewUserData(L, f)
+	ud := NewUserData(L, f)
 	L.Push(ud)
 
 	return 1
@@ -46,7 +48,7 @@ func NewFormatL(L *lua.LState) int {
 
 func Preload(L *lua.LState) lua.LValue {
 	f := &Format{}
-	ud := core.NewUserData(L, f)
+	ud := NewUserData(L, f)
 
 	return ud
 }

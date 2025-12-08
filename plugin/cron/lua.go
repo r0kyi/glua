@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-co-op/gocron"
@@ -9,7 +10,7 @@ import (
 )
 
 func (c *Cron) String() string {
-	return "cron"
+	return fmt.Sprintf("glua.cron: %p", c)
 }
 
 func (c *Cron) AssertFunction() lua.LGFunction {

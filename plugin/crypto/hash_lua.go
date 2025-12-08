@@ -1,9 +1,13 @@
 package crypto
 
-import lua "github.com/yuin/gopher-lua"
+import (
+	"fmt"
+
+	lua "github.com/yuin/gopher-lua"
+)
 
 func (h *Hash) String() string {
-	return "glua.crypto.hash"
+	return fmt.Sprintf("glua.crypto.hash: %p", h)
 }
 
 func (h *Hash) AssertFunction() lua.LGFunction {

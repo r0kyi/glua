@@ -1,12 +1,14 @@
 package crypto
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (c *Crypto) String() string {
-	return "glua.crypto"
+	return fmt.Sprintf("glua.crypto: %p", c)
 }
 
 func (c *Crypto) AssertFunction() lua.LGFunction {
@@ -20,14 +22,14 @@ func (c *Crypto) MetatableName() string {
 func (c *Crypto) Index(L *lua.LState, key string) lua.LValue {
 	switch key {
 	case "aes":
-		return core.NewUserData(L, c.aes)
+		return NewUserData(L, c.aes)
 	}
 
-	return core.SubModIndex(L, key, c.hash)
+	return SubModIndex(L, key, c.hash)
 }
 
 func Preload(L *lua.LState) lua.LValue {
 	c := &Crypto{}
-	ud := core.NewUserData(L, c)
+	ud := NewUserData(L, c)
 	return ud
 }

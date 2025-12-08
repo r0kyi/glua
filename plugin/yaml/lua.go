@@ -1,12 +1,14 @@
 package yaml
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (y *Yaml) String() string {
-	return "yaml"
+	return fmt.Sprintf("glua.yaml: %p", y)
 }
 
 func (y *Yaml) AssertFunction() lua.LGFunction {
@@ -19,7 +21,7 @@ func (y *Yaml) MetatableName() string {
 
 func (y *Yaml) encodeL(L *lua.LState) int {
 	yaml := L.CheckTable(1)
-	y.yaml = core.LTableToMap(yaml)
+	y.yaml = LTableToMap(yaml)
 
 	err := y.encode()
 	if err != nil {
@@ -45,7 +47,7 @@ func (y *Yaml) decodeL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(core.MapToLTable(L, y.yaml))
+	L.Push(MapToLTable(L, y.yaml))
 	L.Push(lua.LNil)
 
 	return 2
@@ -64,7 +66,7 @@ func (y *Yaml) Index(L *lua.LState, key string) lua.LValue {
 
 func Preload(L *lua.LState) lua.LValue {
 	y := &Yaml{}
-	ud := core.NewUserData(L, y)
+	ud := NewUserData(L, y)
 
 	return ud
 }

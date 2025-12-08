@@ -1,12 +1,14 @@
 package database
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (db *DataBase) String() string {
-	return "database"
+	return fmt.Sprintf("glua.database: %p", db)
 }
 
 func (db *DataBase) AssertFunction() lua.LGFunction {
@@ -30,7 +32,7 @@ func (db *DataBase) openL(L *lua.LState) int {
 		return 2
 	}
 
-	ud := core.NewUserData(L, db)
+	ud := NewUserData(L, db)
 	L.Push(ud)
 	L.Push(lua.LNil)
 	return 2
@@ -67,7 +69,7 @@ func (db *DataBase) queryL(L *lua.LState) int {
 		return 2
 	}
 
-	t := core.SliceMapToLTable(L, rows)
+	t := SliceMapToLTable(L, rows)
 	L.Push(t)
 	L.Push(lua.LNil)
 	return 2
@@ -88,7 +90,7 @@ func (db *DataBase) Index(L *lua.LState, key string) lua.LValue {
 
 func Preload(L *lua.LState) lua.LValue {
 	db := &DataBase{}
-	ud := core.NewUserData(L, db)
+	ud := NewUserData(L, db)
 
 	return ud
 }

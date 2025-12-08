@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 )
 
 type JWT struct {
@@ -18,7 +18,7 @@ func (j *JWT) sign() error {
 	claims := jwt.MapClaims(j.jwt)
 	token := jwt.NewWithClaims(getSigningMethod(j.alg), claims)
 
-	raw, err := token.SignedString(core.S2B(j.key))
+	raw, err := token.SignedString(S2B(j.key))
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func (j *JWT) sign() error {
 
 func (j *JWT) verify() error {
 	token, err := jwt.Parse(j.raw, func(_ *jwt.Token) (any, error) {
-		return core.S2B(j.key), nil
+		return S2B(j.key), nil
 	})
 	if err != nil {
 		return err

@@ -2,13 +2,14 @@ package crypto
 
 import (
 	"errors"
+	"fmt"
 
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (a *Aes) String() string {
-	return "glua.crypto.aes"
+	return fmt.Sprintf("glua.crypto.aes: %p", a)
 }
 
 func (a *Aes) AssertFunction() lua.LGFunction {
@@ -106,11 +107,11 @@ func (a *Aes) Index(L *lua.LState, key string) lua.LValue {
 }
 
 func NewAesL(L *lua.LState) int {
-	ud := core.NewUserData(L, &Aes{})
+	ud := NewUserData(L, &Aes{})
 	a := ud.Value.(*Aes)
 
 	if tbl, ok := L.Get(2).(*lua.LTable); ok {
-		_ = core.LTableToStrut(tbl, a)
+		_ = LTableToStrut(tbl, a)
 	}
 
 	L.Push(ud)

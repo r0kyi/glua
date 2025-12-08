@@ -4,7 +4,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 )
 
 type Session struct {
@@ -24,7 +24,7 @@ type Session struct {
 func (s *Session) newStore() {
 	var keyPairs [][]byte
 	for _, key := range s.Keys {
-		keyPairs = append(keyPairs, core.S2B(key))
+		keyPairs = append(keyPairs, S2B(key))
 	}
 	store := cookie.NewStore(keyPairs...)
 	s.store = &store

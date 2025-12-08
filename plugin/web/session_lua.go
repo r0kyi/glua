@@ -1,12 +1,14 @@
 package web
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (s *Session) String() string {
-	return "web.session"
+	return fmt.Sprintf("glua.web.session: %p", s)
 }
 
 func (s *Session) AssertFunction() lua.LGFunction {
@@ -93,11 +95,11 @@ func (s *Session) Index(L *lua.LState, key string) lua.LValue {
 }
 
 func NewSessionL(L *lua.LState) int {
-	ud := core.NewUserData(L, &Session{})
+	ud := NewUserData(L, &Session{})
 	s := ud.Value.(*Session)
 
 	if tbl, ok := L.Get(2).(*lua.LTable); ok {
-		_ = core.LTableToStrut(tbl, s)
+		_ = LTableToStrut(tbl, s)
 	}
 	s.newStore()
 	L.Push(ud)

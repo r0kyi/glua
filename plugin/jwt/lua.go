@@ -1,12 +1,14 @@
 package jwt
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (j *JWT) String() string {
-	return "jwt"
+	return fmt.Sprintf("glua.jwt: %p", j)
 }
 
 func (j *JWT) AssertFunction() lua.LGFunction {
@@ -23,7 +25,7 @@ func (j *JWT) signL(L *lua.LState) int {
 	jwt := L.CheckTable(3)
 	j.key = key
 	j.alg = alg
-	j.jwt = core.LTableToMap(jwt)
+	j.jwt = LTableToMap(jwt)
 
 	err := j.sign()
 	if err != nil {
@@ -51,7 +53,7 @@ func (j *JWT) verifyL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(core.MapToLTable(L, j.jwt))
+	L.Push(MapToLTable(L, j.jwt))
 	L.Push(lua.LNil)
 
 	return 2
@@ -70,7 +72,7 @@ func (j *JWT) Index(L *lua.LState, key string) lua.LValue {
 
 func Preload(L *lua.LState) lua.LValue {
 	j := &JWT{}
-	ud := core.NewUserData(L, j)
+	ud := NewUserData(L, j)
 
 	return ud
 }

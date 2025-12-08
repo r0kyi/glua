@@ -1,12 +1,14 @@
 package xml
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (x *Xml) String() string {
-	return "xml"
+	return fmt.Sprintf("glua.xml: %p", x)
 }
 
 func (x *Xml) AssertFunction() lua.LGFunction {
@@ -19,7 +21,7 @@ func (x *Xml) MetatableName() string {
 
 func (x *Xml) encodeL(L *lua.LState) int {
 	xml := L.CheckTable(1)
-	x.xml = core.LTableToMap(xml)
+	x.xml = LTableToMap(xml)
 
 	err := x.encode()
 	if err != nil {
@@ -45,7 +47,7 @@ func (x *Xml) decodeL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(core.MapToLTable(L, x.xml))
+	L.Push(MapToLTable(L, x.xml))
 	L.Push(lua.LNil)
 
 	return 2
@@ -64,7 +66,7 @@ func (x *Xml) Index(L *lua.LState, key string) lua.LValue {
 
 func Preload(L *lua.LState) lua.LValue {
 	x := &Xml{}
-	ud := core.NewUserData(L, x)
+	ud := NewUserData(L, x)
 
 	return ud
 }

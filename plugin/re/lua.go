@@ -1,12 +1,14 @@
 package re
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (r *Re) String() string {
-	return "re"
+	return fmt.Sprintf("glua.re: %p", r)
 }
 
 func (r *Re) AssertFunction() lua.LGFunction {
@@ -27,7 +29,7 @@ func (r *Re) compileL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(core.NewUserData(L, r))
+	L.Push(NewUserData(L, r))
 	L.Push(lua.LNil)
 
 	return 2
@@ -102,7 +104,7 @@ func (r *Re) Index(L *lua.LState, key string) lua.LValue {
 
 func Preload(L *lua.LState) lua.LValue {
 	r := &Re{}
-	ud := core.NewUserData(L, r)
+	ud := NewUserData(L, r)
 
 	return ud
 }

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 )
 
 type Http struct {
@@ -26,7 +26,7 @@ func (h *Http) get() error {
 
 	h.response.statusCode = response.StatusCode()
 	h.response.headers = response.Header()
-	h.response.body = core.B2S(response.Body())
+	h.response.body = B2S(response.Body())
 
 	return nil
 }
@@ -39,7 +39,7 @@ func (h *Http) post() error {
 
 	h.response.statusCode = response.StatusCode()
 	h.response.headers = response.Header()
-	h.response.body = core.B2S(response.Body())
+	h.response.body = B2S(response.Body())
 
 	return nil
 }
@@ -52,7 +52,7 @@ func (h *Http) put() error {
 
 	h.response.statusCode = response.StatusCode()
 	h.response.headers = response.Header()
-	h.response.body = core.B2S(response.Body())
+	h.response.body = B2S(response.Body())
 
 	return nil
 }
@@ -65,7 +65,7 @@ func (h *Http) delete() error {
 
 	h.response.statusCode = response.StatusCode()
 	h.response.headers = response.Header()
-	h.response.body = core.B2S(response.Body())
+	h.response.body = B2S(response.Body())
 
 	return nil
 }
@@ -78,7 +78,7 @@ func (h *Http) patch() error {
 
 	h.response.statusCode = response.StatusCode()
 	h.response.headers = response.Header()
-	h.response.body = core.B2S(response.Body())
+	h.response.body = B2S(response.Body())
 
 	return nil
 }

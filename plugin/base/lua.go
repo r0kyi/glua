@@ -1,12 +1,14 @@
 package base
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (b *Base) String() string {
-	return "glua.base"
+	return fmt.Sprintf("glua.base: %p", b)
 }
 
 func (b *Base) AssertFunction() lua.LGFunction {
@@ -66,7 +68,7 @@ func (b *Base) Index(L *lua.LState, key string) lua.LValue {
 
 func Preload(L *lua.LState) lua.LValue {
 	b := &Base{}
-	ud := core.NewUserData(L, b)
+	ud := NewUserData(L, b)
 
 	return ud
 }

@@ -1,14 +1,15 @@
 package http
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
-func (h *Http) String() string { return "http" }
+func (h *Http) String() string { return fmt.Sprintf("glua.http: %p", h) }
 func (h *Http) AssertFunction() lua.LGFunction {
 	return NewHttpL
 }
@@ -27,7 +28,7 @@ func (h *Http) getL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(core.NewUserData(L, h.response))
+	L.Push(NewUserData(L, h.response))
 	L.Push(lua.LNil)
 
 	return 2
@@ -49,7 +50,7 @@ func (h *Http) postL(L *lua.LState) int {
 	}
 
 	h.Body = body
-	L.Push(core.NewUserData(L, h.response))
+	L.Push(NewUserData(L, h.response))
 	L.Push(lua.LNil)
 
 	return 2
@@ -71,7 +72,7 @@ func (h *Http) putL(L *lua.LState) int {
 	}
 
 	h.Body = body
-	L.Push(core.NewUserData(L, h.response))
+	L.Push(NewUserData(L, h.response))
 	L.Push(lua.LNil)
 
 	return 2
@@ -93,7 +94,7 @@ func (h *Http) deleteL(L *lua.LState) int {
 	}
 
 	h.Body = body
-	L.Push(core.NewUserData(L, h.response))
+	L.Push(NewUserData(L, h.response))
 	L.Push(lua.LNil)
 
 	return 2
@@ -115,7 +116,7 @@ func (h *Http) patchL(L *lua.LState) int {
 	}
 
 	h.Body = body
-	L.Push(core.NewUserData(L, h.response))
+	L.Push(NewUserData(L, h.response))
 	L.Push(lua.LNil)
 
 	return 2
@@ -131,7 +132,7 @@ func (h *Http) optionsL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(core.NewUserData(L, h.response))
+	L.Push(NewUserData(L, h.response))
 	L.Push(lua.LNil)
 
 	return 2
@@ -147,7 +148,7 @@ func (h *Http) headL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(core.NewUserData(L, h.response))
+	L.Push(NewUserData(L, h.response))
 	L.Push(lua.LNil)
 
 	return 2
@@ -170,9 +171,9 @@ func (h *Http) Index(L *lua.LState, key string) lua.LValue {
 	case "head":
 		return L.NewFunction(h.headL)
 	case "headers":
-		return core.MapToLTable(L, h.Headers)
+		return MapToLTable(L, h.Headers)
 	case "args":
-		return core.MapToLTable(L, h.Args)
+		return MapToLTable(L, h.Args)
 	case "body":
 		return lua.LString(h.Body)
 	case "proxy":
@@ -185,7 +186,7 @@ func (h *Http) Index(L *lua.LState, key string) lua.LValue {
 }
 
 func NewHttpL(L *lua.LState) int {
-	ud := core.NewUserData(L, &Http{
+	ud := NewUserData(L, &Http{
 		client: resty.New(),
 		response: &Response{
 			headers: make(map[string][]string),
@@ -194,7 +195,7 @@ func NewHttpL(L *lua.LState) int {
 	h := ud.Value.(*Http)
 
 	if tbl, ok := L.Get(2).(*lua.LTable); ok {
-		_ = core.LTableToStrut(tbl, h)
+		_ = LTableToStrut(tbl, h)
 	}
 	if h.Timeout > 0 {
 		h.Timeout = h.Timeout * time.Second
@@ -215,7 +216,7 @@ func NewHttpL(L *lua.LState) int {
 
 func Preload(L *lua.LState) lua.LValue {
 	h := &Http{}
-	ud := core.NewUserData(L, h)
+	ud := NewUserData(L, h)
 
 	return ud
 }

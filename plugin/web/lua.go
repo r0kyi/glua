@@ -1,13 +1,15 @@
 package web
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (w *Web) String() string {
-	return "web"
+	return fmt.Sprintf("glua.web: %p", w)
 }
 
 func (w *Web) AssertFunction() lua.LGFunction {
@@ -131,20 +133,20 @@ func (w *Web) Index(L *lua.LState, key string) lua.LValue {
 	case "run":
 		return L.NewFunction(w.runL)
 	case "session":
-		return core.NewUserData(L, w.session)
+		return NewUserData(L, w.session)
 	default:
 		return lua.LNil
 	}
 }
 
 func NewWebL(L *lua.LState) int {
-	ud := core.NewUserData(L, &Web{
+	ud := NewUserData(L, &Web{
 		context: &Context{},
 	})
 	w := ud.Value.(*Web)
 
 	if tbl, ok := L.Get(2).(*lua.LTable); ok {
-		_ = core.LTableToStrut(tbl, w)
+		_ = LTableToStrut(tbl, w)
 	}
 	switch w.Mode {
 	case "debug":
@@ -173,7 +175,7 @@ func NewWebL(L *lua.LState) int {
 
 func Preload(L *lua.LState) lua.LValue {
 	w := &Web{}
-	ud := core.NewUserData(L, w)
+	ud := NewUserData(L, w)
 
 	return ud
 }

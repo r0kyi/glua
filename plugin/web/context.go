@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"github.com/gin-gonic/gin"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 )
 
 type Context struct {
@@ -106,7 +106,7 @@ func (c *Context) getParam() {
 
 func (c *Context) body() {
 	body, _ := io.ReadAll(c.context.Request.Body)
-	c.request.body = core.B2S(body)
+	c.request.body = B2S(body)
 }
 
 func (c *Context) method() {

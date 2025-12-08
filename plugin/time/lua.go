@@ -1,14 +1,15 @@
 package time
 
 import (
+	"fmt"
 	"time"
 
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (t *Time) String() string {
-	return "time"
+	return fmt.Sprintf("glua.time: %p", t)
 }
 
 func (t *Time) AssertFunction() lua.LGFunction {
@@ -116,7 +117,7 @@ func nowL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := core.NewUserData(L, t)
+	ud := NewUserData(L, t)
 
 	L.Push(ud)
 
@@ -143,7 +144,7 @@ func dateL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := core.NewUserData(L, t)
+	ud := NewUserData(L, t)
 
 	L.Push(ud)
 
@@ -158,7 +159,7 @@ func unixL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := core.NewUserData(L, t)
+	ud := NewUserData(L, t)
 
 	L.Push(ud)
 
@@ -178,7 +179,7 @@ func parseL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := core.NewUserData(L, t)
+	ud := NewUserData(L, t)
 
 	L.Push(ud)
 
@@ -204,7 +205,7 @@ func parseInLocationL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := core.NewUserData(L, t)
+	ud := NewUserData(L, t)
 
 	L.Push(ud)
 
@@ -214,7 +215,7 @@ func parseInLocationL(L *lua.LState) int {
 
 func Preload(L *lua.LState) lua.LValue {
 	t := &Time{}
-	ud := core.NewUserData(L, t)
+	ud := NewUserData(L, t)
 
 	return ud
 }

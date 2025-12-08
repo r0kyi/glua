@@ -1,12 +1,14 @@
 package json
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (j *Json) String() string {
-	return "json"
+	return fmt.Sprintf("glua.json: %p", j)
 }
 
 func (j *Json) AssertFunction() lua.LGFunction {
@@ -19,7 +21,7 @@ func (j *Json) MetatableName() string {
 
 func (j *Json) encodeL(L *lua.LState) int {
 	json := L.CheckTable(1)
-	j.json = core.LTableToMap(json)
+	j.json = LTableToMap(json)
 
 	err := j.encode()
 	if err != nil {
@@ -45,7 +47,7 @@ func (j *Json) decodeL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(core.MapToLTable(L, j.json))
+	L.Push(MapToLTable(L, j.json))
 	L.Push(lua.LNil)
 
 	return 2
@@ -63,7 +65,7 @@ func (j *Json) Index(L *lua.LState, key string) lua.LValue {
 
 func Preload(L *lua.LState) lua.LValue {
 	j := &Json{}
-	ud := core.NewUserData(L, j)
+	ud := NewUserData(L, j)
 
 	return ud
 }

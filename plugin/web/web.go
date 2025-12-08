@@ -3,7 +3,7 @@ package web
 import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/r0kyi/glua/core"
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -71,7 +71,7 @@ func (w *Web) toHandler(L *lua.LState, fn *lua.LFunction) gin.HandlerFunc {
 			Fn:      fn,
 			NRet:    0,
 			Protect: true,
-		}, core.NewUserData(L, w.context)); err != nil {
+		}, NewUserData(L, w.context)); err != nil {
 			c.String(500, "")
 		}
 	}

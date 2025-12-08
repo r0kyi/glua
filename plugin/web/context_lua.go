@@ -1,12 +1,14 @@
 package web
 
 import (
-	"github.com/r0kyi/glua/core"
+	"fmt"
+
+	. "github.com/r0kyi/glua/core"
 	lua "github.com/yuin/gopher-lua"
 )
 
 func (c *Context) String() string {
-	return "web.context"
+	return fmt.Sprintf("glua.web.context: %p", c)
 }
 
 func (c *Context) AssertFunction() lua.LGFunction {
@@ -21,7 +23,7 @@ func (c *Context) jsonL(L *lua.LState) int {
 	statusCode := L.CheckNumber(1)
 	obj := L.CheckTable(2)
 	c.response.statusCode = int(statusCode)
-	c.response.obj = core.LTableToMap(obj)
+	c.response.obj = LTableToMap(obj)
 	c.json()
 
 	return 0
@@ -31,7 +33,7 @@ func (c *Context) asciiJsonL(L *lua.LState) int {
 	statusCode := L.CheckNumber(1)
 	obj := L.CheckTable(2)
 	c.response.statusCode = int(statusCode)
-	c.response.obj = core.LTableToMap(obj)
+	c.response.obj = LTableToMap(obj)
 	c.asciiJson()
 
 	return 0
@@ -56,7 +58,7 @@ func (c *Context) htmlL(L *lua.LState) int {
 	obj := L.CheckTable(3)
 	c.response.statusCode = int(statusCode)
 	c.response.name = name
-	c.response.obj = core.LTableToMap(obj)
+	c.response.obj = LTableToMap(obj)
 	c.html()
 
 	return 0
