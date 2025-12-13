@@ -3,41 +3,29 @@ package re
 import (
 	"regexp"
 
-	. "github.com/r0kyi/glua/core"
+	"github.com/r0kyi/glua/core"
 )
 
 type Re struct {
-	regexp  *regexp.Regexp
-	pattern string
-	src     string
-	repl    string
+	regexp *regexp.Regexp
 }
 
-func (r *Re) compile() error {
-	compiled, err := regexp.Compile(r.pattern)
-	if err != nil {
-		return err
-	}
-	r.regexp = compiled
-	return nil
+func (r *Re) matchString(src string) bool {
+	return r.regexp.Match(core.S2B(src))
 }
 
-func (r *Re) matchString() bool {
-	return r.regexp.Match(S2B(r.src))
+func (r *Re) findString(src string) string {
+	return r.regexp.FindString(src)
 }
 
-func (r *Re) findString() string {
-	return r.regexp.FindString(r.src)
+func (r *Re) findAllString(src string) []string {
+	return r.regexp.FindAllString(src, -1)
 }
 
-func (r *Re) findAllString() []string {
-	return r.regexp.FindAllString(r.src, -1)
+func (r *Re) replaceAllString(src string, repl string) string {
+	return r.regexp.ReplaceAllString(src, repl)
 }
 
-func (r *Re) replaceAllString() string {
-	return r.regexp.ReplaceAllString(r.src, r.repl)
-}
-
-func (r *Re) split() []string {
-	return r.regexp.Split(r.src, -1)
+func (r *Re) split(src string) []string {
+	return r.regexp.Split(src, -1)
 }

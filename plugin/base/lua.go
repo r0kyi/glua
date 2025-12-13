@@ -1,52 +1,53 @@
 package base
 
 import (
+	"encoding/base32"
+	"encoding/base64"
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (b *Base) String() string {
 	return fmt.Sprintf("glua.base: %p", b)
 }
 
-func (b *Base) AssertFunction() lua.LGFunction {
-	return nil
+func (b *Base) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (b *Base) MetatableName() string {
-	return "lua.table.base"
+func (b *Base) AssertFunction() (*lua.LFunction, bool) {
+	return nil, false
 }
 
 func (b *Base) base32EncodeL(L *lua.LState) int {
-	b.raw = L.CheckString(1)
-	b.base32Encode()
-	L.Push(lua.LString(b.encoded))
+	raw := L.CheckString(1)
+	encoded := b.base32Encode(raw)
+	L.Push(lua.LString(encoded))
 
 	return 1
 }
 
 func (b *Base) base32DecodeL(L *lua.LState) int {
-	b.encoded = L.CheckString(1)
-	b.base32Decode()
-	L.Push(lua.LString(b.raw))
+	encoded := L.CheckString(1)
+	raw := b.base32Decode(encoded)
+	L.Push(lua.LString(raw))
 
 	return 1
 }
 
 func (b *Base) base64EncodeL(L *lua.LState) int {
-	b.raw = L.CheckString(1)
-	b.base64Encode()
-	L.Push(lua.LString(b.encoded))
+	raw := L.CheckString(1)
+	encoded := b.base64Encode(raw)
+	L.Push(lua.LString(encoded))
 
 	return 1
 }
 
 func (b *Base) base64DecodeL(L *lua.LState) int {
-	b.encoded = L.CheckString(1)
-	b.base64Decode()
-	L.Push(lua.LString(b.raw))
+	encoded := L.CheckString(1)
+	raw := b.base64Decode(encoded)
+	L.Push(lua.LString(raw))
 
 	return 1
 }
@@ -66,9 +67,11 @@ func (b *Base) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func Preload(L *lua.LState) lua.LValue {
-	b := &Base{}
-	ud := NewUserData(L, b)
+func Preload() lua.LValue {
+	b := &Base{
+		b32: base32.StdEncoding,
+		b64: base64.StdEncoding,
+	}
 
-	return ud
+	return b
 }

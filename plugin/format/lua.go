@@ -3,20 +3,20 @@ package format
 import (
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (f *Format) String() string {
 	return fmt.Sprintf(f.format, f.args...)
 }
 
-func (f *Format) AssertFunction() lua.LGFunction {
-	return NewFormatL
+func (f *Format) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (f *Format) MetatableName() string {
-	return "lua.table.format"
+func (f *Format) AssertFunction() (*lua.LFunction, bool) {
+	return core.NewFunction(newFormatL), true
 }
 
 func (f *Format) Index(L *lua.LState, key string) lua.LValue {
@@ -26,29 +26,30 @@ func (f *Format) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func NewFormatL(L *lua.LState) int {
-	if L.GetTop() < 3 {
+func newFormatL(L *lua.LState) int {
+	if L.GetTop() < 1 {
 		L.Push(lua.LNil)
 		return 1
 	}
 
-	format := L.CheckString(2)
+	format := L.CheckString(1)
 
 	var args []any
-	for i := 3; i <= L.GetTop(); i++ {
+	for i := 2; i <= L.GetTop(); i++ {
 		args = append(args, L.CheckAny(i))
 	}
 
-	f := &Format{format: format, args: args}
-	ud := NewUserData(L, f)
-	L.Push(ud)
+	f := &Format{
+		format: format,
+		args:   args,
+	}
+	L.Push(f)
 
 	return 1
 }
 
-func Preload(L *lua.LState) lua.LValue {
+func Preload() lua.LValue {
 	f := &Format{}
-	ud := NewUserData(L, f)
 
-	return ud
+	return f
 }

@@ -46,7 +46,7 @@ r.run()
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
 | path     | string   | 路径，必须                                                   |
-| fn       | function | 处理函数，必须<br />参数为 context，类型为 userdata<br />方法请看下方的 context 部分 |
+| fn       | function | 处理函数，必须<br />参数为 context，类型为 object<br />方法请看下方的 context 部分 |
 
 **demo**
 
@@ -77,7 +77,7 @@ r.run()
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
 | path     | string   | 路径，必须                                                   |
-| fn       | function | 处理函数，必须<br />参数为 context，类型为 userdata<br />方法请看下方的 context 部分 |
+| fn       | function | 处理函数，必须<br />参数为 context，类型为 object<br />方法请看下方的 context 部分 |
 
 **demo**
 
@@ -108,7 +108,7 @@ r.run()
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
 | path     | string   | 路径，必须                                                   |
-| fn       | function | 处理函数，必须<br />参数为 context，类型为 userdata<br />方法请看下方的 context 部分 |
+| fn       | function | 处理函数，必须<br />参数为 context，类型为 object<br />方法请看下方的 context 部分 |
 
 **demo**
 
@@ -139,7 +139,7 @@ r.run()
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
 | path     | string   | 路径，必须                                                   |
-| fn       | function | 处理函数，必须<br />参数为 context，类型为 userdata<br />方法请看下方的 context 部分 |
+| fn       | function | 处理函数，必须<br />参数为 context，类型为 object<br />方法请看下方的 context 部分 |
 
 **demo**
 
@@ -170,7 +170,7 @@ r.run()
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
 | path     | string   | 路径，必须                                                   |
-| fn       | function | 处理函数，必须<br />参数为 context，类型为 userdata<br />方法请看下方的 context 部分 |
+| fn       | function | 处理函数，必须<br />参数为 context，类型为 object<br />方法请看下方的 context 部分 |
 
 **demo**
 
@@ -201,7 +201,7 @@ r.run()
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
 | path     | string   | 路径，必须                                                   |
-| fn       | function | 处理函数，必须<br />参数为 context，类型为 userdata<br />方法请看下方的 context 部分 |
+| fn       | function | 处理函数，必须<br />参数为 context，类型为 object<br />方法请看下方的 context 部分 |
 
 **demo**
 
@@ -229,7 +229,7 @@ r.run()
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
 | path     | string   | 路径，必须                                                   |
-| fn       | function | 处理函数，必须<br />参数为 context，类型为 userdata<br />方法请看下方的 context 部分 |
+| fn       | function | 处理函数，必须<br />参数为 context，类型为 object<br />方法请看下方的 context 部分 |
 
 **demo**
 
@@ -254,7 +254,7 @@ r.run()
 
 | 参数名称 | 参数类型 | 备注                                           |
 | -------- | -------- | ---------------------------------------------- |
-| session  | userdata | session，必须<br />方法请看下方的 session 部分 |
+| session  | object | session，必须<br />方法请看下方的 session 部分 |
 
 **demo**
 
@@ -777,7 +777,7 @@ r.use(s)
 
 | 参数名称 | 参数类型 | 备注                                                    |
 | -------- | -------- | ------------------------------------------------------- |
-| context  | userdata | 本次请求的上下文，必须<br />方法请看上方的 context 部分 |
+| context  | object | 本次请求的上下文，必须<br />方法请看上方的 context 部分 |
 
 **demo**
 

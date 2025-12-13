@@ -2,7 +2,7 @@
 
 ## 简介
 
-glua 基于 [gopher-lua](https://github.com/yuin/gopher-lua) 二次开发，在原版基础上新增了许多模块
+glua 基于 [gopher-lua](https://github.com/r0kyi/gopher-lua) 二次开发，在原版基础上新增了许多模块
 
 ## 模块列表
 

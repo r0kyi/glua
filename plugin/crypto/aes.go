@@ -6,17 +6,14 @@ import (
 	"crypto/cipher"
 	"errors"
 
-	. "github.com/r0kyi/glua/core"
+	"github.com/r0kyi/glua/core"
 )
 
 type Aes struct {
-	plaintext  string
-	ciphertext string
-	Key        string `lua:"key"`
-	Iv         string `lua:"iv"`
-	Mode       string `lua:"mode"`
-	tag        string
-	AAD        string `lua:"aad"`
+	Key  string `lua:"key"`
+	Iv   string `lua:"iv"`
+	Mode string `lua:"mode"`
+	AAD  string `lua:"aad"`
 }
 
 func pkcs7Padding(data []byte, blockSize int) []byte {
@@ -39,39 +36,39 @@ func pkcs7UnPadding(data []byte) ([]byte, error) {
 	return data[:length-padding], nil
 }
 
-func (a *Aes) cbcEncrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) cbcEncrypt(plaintext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	if len(iv) != block.BlockSize() {
-		return errors.New("invalid iv size")
+		return "", errors.New("invalid iv size")
 	}
 
-	plainPadded := pkcs7Padding(S2B(a.plaintext), block.BlockSize())
+	plainPadded := pkcs7Padding(core.S2B(plaintext), block.BlockSize())
 	cipherBytes := make([]byte, len(plainPadded))
 	cipher.NewCBCEncrypter(block, iv).CryptBlocks(cipherBytes, plainPadded)
-	a.ciphertext = B2S(cipherBytes)
+	ciphertext := core.B2S(cipherBytes)
 
-	return nil
+	return ciphertext, nil
 }
 
-func (a *Aes) cbcDecrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) cbcDecrypt(ciphertext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	cipherBytes := S2B(a.ciphertext)
+	cipherBytes := core.S2B(ciphertext)
 	if len(cipherBytes)%block.BlockSize() != 0 {
-		return errors.New("ciphertext is not a multiple of block size")
+		return "", errors.New("ciphertext is not a multiple of block size")
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	if len(iv) != block.BlockSize() {
-		return errors.New("invalid iv size")
+		return "", errors.New("invalid iv size")
 	}
 
 	plainBytes := make([]byte, len(cipherBytes))
@@ -79,209 +76,209 @@ func (a *Aes) cbcDecrypt() error {
 
 	plainBytes, err = pkcs7UnPadding(plainBytes)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	a.plaintext = B2S(plainBytes)
+	plaintext := core.B2S(plainBytes)
 
-	return nil
+	return plaintext, nil
 }
 
-func (a *Aes) cfbEncrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) cfbEncrypt(plaintext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	if len(iv) != block.BlockSize() {
-		return errors.New("invalid iv size")
+		return "", errors.New("invalid iv size")
 	}
 
-	plainBytes := S2B(a.plaintext)
+	plainBytes := core.S2B(plaintext)
 	cipherBytes := make([]byte, len(plainBytes))
 	cipher.NewCFBEncrypter(block, iv).XORKeyStream(cipherBytes, plainBytes)
-	a.ciphertext = B2S(cipherBytes)
+	ciphertext := core.B2S(cipherBytes)
 
-	return nil
+	return ciphertext, nil
 }
 
-func (a *Aes) cfbDecrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) cfbDecrypt(ciphertext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	if len(iv) != block.BlockSize() {
-		return errors.New("invalid iv size")
+		return "", errors.New("invalid iv size")
 	}
 
-	cipherBytes := S2B(a.ciphertext)
+	cipherBytes := core.S2B(ciphertext)
 	plainBytes := make([]byte, len(cipherBytes))
 	cipher.NewCFBDecrypter(block, iv).XORKeyStream(plainBytes, cipherBytes)
-	a.plaintext = B2S(plainBytes)
+	plaintext := core.B2S(plainBytes)
 
-	return nil
+	return plaintext, nil
 }
 
-func (a *Aes) ofbEncrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) ofbEncrypt(plaintext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	if len(iv) != block.BlockSize() {
-		return errors.New("invalid iv size")
+		return "", errors.New("invalid iv size")
 	}
 
-	plainBytes := S2B(a.plaintext)
+	plainBytes := core.S2B(plaintext)
 	cipherBytes := make([]byte, len(plainBytes))
 	cipher.NewOFB(block, iv).XORKeyStream(cipherBytes, plainBytes)
-	a.ciphertext = B2S(cipherBytes)
+	ciphertext := core.B2S(cipherBytes)
 
-	return nil
+	return ciphertext, nil
 }
 
-func (a *Aes) ofbDecrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) ofbDecrypt(ciphertext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	if len(iv) != block.BlockSize() {
-		return errors.New("invalid iv size")
+		return "", errors.New("invalid iv size")
 	}
 
-	cipherBytes := S2B(a.ciphertext)
+	cipherBytes := core.S2B(ciphertext)
 	plainBytes := make([]byte, len(cipherBytes))
 	cipher.NewOFB(block, iv).XORKeyStream(plainBytes, cipherBytes)
-	a.plaintext = B2S(plainBytes)
+	plaintext := core.B2S(plainBytes)
 
-	return nil
+	return plaintext, nil
 }
 
-func (a *Aes) ctrEncrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) ctrEncrypt(plaintext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	if len(iv) != block.BlockSize() {
-		return errors.New("invalid iv size")
+		return "", errors.New("invalid iv size")
 	}
 
-	plainBytes := S2B(a.plaintext)
+	plainBytes := core.S2B(plaintext)
 	cipherBytes := make([]byte, len(plainBytes))
 	cipher.NewCTR(block, iv).XORKeyStream(cipherBytes, plainBytes)
-	a.ciphertext = B2S(cipherBytes)
+	ciphertext := core.B2S(cipherBytes)
 
-	return nil
+	return ciphertext, nil
 }
 
-func (a *Aes) ctrDecrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) ctrDecrypt(ciphertext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	if len(iv) != block.BlockSize() {
-		return errors.New("invalid iv size")
+		return "", errors.New("invalid iv size")
 	}
 
-	cipherBytes := S2B(a.ciphertext)
+	cipherBytes := core.S2B(ciphertext)
 	plainBytes := make([]byte, len(cipherBytes))
 	cipher.NewCTR(block, iv).XORKeyStream(plainBytes, cipherBytes)
-	a.plaintext = B2S(plainBytes)
+	plaintext := core.B2S(plainBytes)
 
-	return nil
+	return plaintext, nil
 }
 
-func (a *Aes) gcmEncrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) gcmEncrypt(plaintext string) (string, string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 	gcm, err := cipher.NewGCMWithNonceSize(block, len(iv))
 	if err != nil {
-		return err
+		return "", "", err
 	}
 
-	plainBytes := S2B(a.plaintext)
-	cipherWithTag := gcm.Seal(nil, iv, plainBytes, S2B(a.AAD))
+	plainBytes := core.S2B(plaintext)
+	cipherWithTag := gcm.Seal(nil, iv, plainBytes, core.S2B(a.AAD))
 
 	tagLen := gcm.Overhead()
 	if len(cipherWithTag) < tagLen {
-		return errors.New("ciphertext too short")
+		return "", "", errors.New("ciphertext too short")
 	}
 
-	a.ciphertext = B2S(cipherWithTag[:len(cipherWithTag)-tagLen])
-	a.tag = B2S(cipherWithTag[len(cipherWithTag)-tagLen:])
+	ciphertext := core.B2S(cipherWithTag[:len(cipherWithTag)-tagLen])
+	tag := core.B2S(cipherWithTag[len(cipherWithTag)-tagLen:])
 
-	return nil
+	return ciphertext, tag, nil
 }
 
-func (a *Aes) gcmDecrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) gcmDecrypt(ciphertext string, tag string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	iv := S2B(a.Iv)
+	iv := core.S2B(a.Iv)
 
 	gcm, err := cipher.NewGCMWithNonceSize(block, len(iv))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	cipherWithTag := append(S2B(a.ciphertext), S2B(a.tag)...)
+	cipherWithTag := append(core.S2B(ciphertext), core.S2B(tag)...)
 
-	plainBytes, err := gcm.Open(nil, iv, cipherWithTag, S2B(a.AAD))
+	plainBytes, err := gcm.Open(nil, iv, cipherWithTag, core.S2B(a.AAD))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	a.plaintext = B2S(plainBytes)
+	plaintext := core.B2S(plainBytes)
 
-	return nil
+	return plaintext, nil
 }
 
-func (a *Aes) ecbEncrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) ecbEncrypt(plaintext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	blockSize := block.BlockSize()
-	plainPadded := pkcs7Padding(S2B(a.plaintext), blockSize)
+	plainPadded := pkcs7Padding(core.S2B(plaintext), blockSize)
 
 	encrypted := make([]byte, len(plainPadded))
 	for bs := 0; bs < len(plainPadded); bs += blockSize {
 		block.Encrypt(encrypted[bs:bs+blockSize], plainPadded[bs:bs+blockSize])
 	}
 
-	a.ciphertext = B2S(encrypted)
+	ciphertext := core.B2S(encrypted)
 
-	return nil
+	return ciphertext, nil
 }
 
-func (a *Aes) ecbDecrypt() error {
-	block, err := aes.NewCipher(S2B(a.Key))
+func (a *Aes) ecbDecrypt(ciphertext string) (string, error) {
+	block, err := aes.NewCipher(core.S2B(a.Key))
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	blockSize := block.BlockSize()
 
-	cipherBytes := S2B(a.ciphertext)
+	cipherBytes := core.S2B(ciphertext)
 	if len(cipherBytes)%blockSize != 0 {
-		return errors.New("invalid ciphertext length")
+		return "", errors.New("invalid ciphertext length")
 	}
 
 	decrypted := make([]byte, len(cipherBytes))
@@ -291,10 +288,10 @@ func (a *Aes) ecbDecrypt() error {
 
 	plainBytes, err := pkcs7UnPadding(decrypted)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	a.plaintext = B2S(plainBytes)
+	plaintext := core.B2S(plainBytes)
 
-	return nil
+	return plaintext, nil
 }

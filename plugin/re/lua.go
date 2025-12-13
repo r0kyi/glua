@@ -2,58 +2,43 @@ package re
 
 import (
 	"fmt"
+	"regexp"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (r *Re) String() string {
 	return fmt.Sprintf("glua.re: %p", r)
 }
 
-func (r *Re) AssertFunction() lua.LGFunction {
-	return nil
+func (r *Re) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (r *Re) MetatableName() string {
-	return "lua.table.re"
-}
-
-func (r *Re) compileL(L *lua.LState) int {
-	r.pattern = L.CheckString(1)
-
-	err := r.compile()
-	if err != nil {
-		L.Push(lua.LNil)
-		L.Push(lua.LString(err.Error()))
-		return 2
-	}
-
-	L.Push(NewUserData(L, r))
-	L.Push(lua.LNil)
-
-	return 2
+func (r *Re) AssertFunction() (*lua.LFunction, bool) {
+	return core.NewFunction(newReL), true
 }
 
 func (r *Re) matchStringL(L *lua.LState) int {
-	r.src = L.CheckString(1)
-	L.Push(lua.LBool(r.matchString()))
+	src := L.CheckString(1)
+	L.Push(lua.LBool(r.matchString(src)))
 
 	return 1
 }
 
 func (r *Re) findStringL(L *lua.LState) int {
-	r.src = L.CheckString(1)
-	L.Push(lua.LString(r.findString()))
+	src := L.CheckString(1)
+	L.Push(lua.LString(r.findString(src)))
 
 	return 1
 }
 
 func (r *Re) findAllStringL(L *lua.LState) int {
-	r.src = L.CheckString(1)
+	src := L.CheckString(1)
 	tbl := L.NewTable()
 
-	arr := r.findAllString()
+	arr := r.findAllString(src)
 	for _, str := range arr {
 		tbl.Append(lua.LString(str))
 	}
@@ -63,18 +48,18 @@ func (r *Re) findAllStringL(L *lua.LState) int {
 }
 
 func (r *Re) replaceAllStringL(L *lua.LState) int {
-	r.src = L.CheckString(1)
-	r.repl = L.CheckString(2)
-	L.Push(lua.LString(r.replaceAllString()))
+	src := L.CheckString(1)
+	repl := L.CheckString(2)
+	L.Push(lua.LString(r.replaceAllString(src, repl)))
 
 	return 1
 }
 
 func (r *Re) splitL(L *lua.LState) int {
-	r.src = L.CheckString(1)
+	src := L.CheckString(1)
 	tbl := L.NewTable()
 
-	arr := r.split()
+	arr := r.split(src)
 	for _, str := range arr {
 		tbl.Append(lua.LString(str))
 	}
@@ -85,8 +70,6 @@ func (r *Re) splitL(L *lua.LState) int {
 
 func (r *Re) Index(L *lua.LState, key string) lua.LValue {
 	switch key {
-	case "compile":
-		return L.NewFunction(r.compileL)
 	case "match":
 		return L.NewFunction(r.matchStringL)
 	case "find":
@@ -102,9 +85,27 @@ func (r *Re) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func Preload(L *lua.LState) lua.LValue {
+func newReL(L *lua.LState) int {
 	r := &Re{}
-	ud := NewUserData(L, r)
 
-	return ud
+	pattern := L.CheckString(1)
+	compiled, err := regexp.Compile(pattern)
+	if err != nil {
+		L.Push(lua.LNil)
+		L.Push(lua.LString(err.Error()))
+		return 2
+	}
+
+	r.regexp = compiled
+
+	L.Push(r)
+	L.Push(lua.LNil)
+
+	return 2
+}
+
+func Preload() lua.LValue {
+	r := &Re{}
+
+	return r
 }

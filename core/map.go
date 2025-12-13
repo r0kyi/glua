@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	lua "github.com/yuin/gopher-lua"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func MapToLTable(L *lua.LState, m any) *lua.LTable {
@@ -13,28 +13,26 @@ func MapToLTable(L *lua.LState, m any) *lua.LTable {
 	return tbl
 }
 
-func SliceMapToLTable(L *lua.LState, slice []map[string]any) *lua.LTable {
-	tbl := L.NewTable()
-	for _, m := range slice {
-		tbl.Append(MapToLTable(L, m))
-	}
-	return tbl
-}
-
-func convertMapToLTable(L *lua.LState, tbl *lua.LTable, m any) {
-	if m == nil {
+func convertMapToLTable(L *lua.LState, tbl *lua.LTable, v any) {
+	if v == nil {
 		return
 	}
 
-	v := reflect.ValueOf(m)
-	if v.Kind() != reflect.Map {
-		return
-	}
+	rv := reflect.ValueOf(v)
 
-	for _, key := range v.MapKeys() {
-		k := fmt.Sprintf("%v", key.Interface())
-		val := v.MapIndex(key).Interface()
-		tbl.RawSetString(k, toLValue(L, val))
+	switch rv.Kind() {
+
+	case reflect.Map:
+		for _, key := range rv.MapKeys() {
+			k := fmt.Sprintf("%v", key.Interface())
+			val := rv.MapIndex(key).Interface()
+			tbl.RawSetString(k, toLValue(L, val))
+		}
+	case reflect.Slice, reflect.Array:
+		for i := 0; i < rv.Len(); i++ {
+			tbl.Append(toLValue(L, rv.Index(i).Interface()))
+		}
+	default:
 	}
 }
 

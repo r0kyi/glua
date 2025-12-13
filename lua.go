@@ -14,26 +14,26 @@ import (
 	"github.com/r0kyi/glua/plugin/web"
 	"github.com/r0kyi/glua/plugin/xml"
 	"github.com/r0kyi/glua/plugin/yaml"
-	lua "github.com/yuin/gopher-lua"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func NewState() *lua.LState {
 	L := lua.NewState()
 	table := L.NewTable()
 
-	table.RawSetString("base", base.Preload(L))
-	table.RawSetString("cron", cron.Preload(L))
-	table.RawSetString("crypto", crypto.Preload(L))
-	table.RawSetString("database", database.Preload(L))
-	table.RawSetString("format", format.Preload(L))
-	table.RawSetString("http", http.Preload(L))
-	table.RawSetString("json", json.Preload(L))
-	table.RawSetString("jwt", jwt.Preload(L))
-	table.RawSetString("re", re.Preload(L))
-	table.RawSetString("time", time.Preload(L))
-	table.RawSetString("web", web.Preload(L))
-	table.RawSetString("xml", xml.Preload(L))
-	table.RawSetString("yaml", yaml.Preload(L))
+	table.RawSetString("base", base.Preload())
+	table.RawSetString("cron", cron.Preload())
+	table.RawSetString("crypto", crypto.Preload())
+	table.RawSetString("database", database.Preload())
+	table.RawSetString("format", format.Preload())
+	table.RawSetString("http", http.Preload())
+	table.RawSetString("json", json.Preload())
+	table.RawSetString("jwt", jwt.Preload())
+	table.RawSetString("re", re.Preload())
+	table.RawSetString("time", time.Preload())
+	table.RawSetString("web", web.Preload())
+	table.RawSetString("xml", xml.Preload())
+	table.RawSetString("yaml", yaml.Preload())
 
 	L.SetGlobal("glua", table)
 	return L

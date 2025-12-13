@@ -4,36 +4,38 @@ import (
 	"errors"
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (a *Aes) String() string {
 	return fmt.Sprintf("glua.crypto.aes: %p", a)
 }
 
-func (a *Aes) AssertFunction() lua.LGFunction {
-	return NewAesL
+func (a *Aes) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (a *Aes) MetatableName() string {
-	return "lua.table.crypto.aes"
+func (a *Aes) AssertFunction() (*lua.LFunction, bool) {
+	return core.NewFunction(newAesL), true
 }
 
-func (a *Aes) EncryptL(L *lua.LState) int {
-	a.plaintext = L.CheckString(1)
+func (a *Aes) encryptL(L *lua.LState) int {
+	plaintext := L.CheckString(1)
+	var ciphertext string
 	var err error
 	switch a.Mode {
 	case "cbc":
-		err = a.cbcEncrypt()
+		ciphertext, err = a.cbcEncrypt(plaintext)
 	case "cfb":
-		err = a.cfbEncrypt()
+		ciphertext, err = a.cfbEncrypt(plaintext)
 	case "ofb":
-		err = a.ofbEncrypt()
+		ciphertext, err = a.ofbEncrypt(plaintext)
 	case "ctr":
-		err = a.ctrEncrypt()
+		ciphertext, err = a.ctrEncrypt(plaintext)
 	case "gcm":
-		err = a.gcmEncrypt()
+		var tag string
+		ciphertext, tag, err = a.gcmEncrypt(plaintext)
 		if err != nil {
 			L.Push(lua.LNil)
 			L.Push(lua.LNil)
@@ -41,13 +43,13 @@ func (a *Aes) EncryptL(L *lua.LState) int {
 			return 3
 		}
 
-		L.Push(lua.LString(a.ciphertext))
-		L.Push(lua.LString(a.tag))
+		L.Push(lua.LString(ciphertext))
+		L.Push(lua.LString(tag))
 		L.Push(lua.LNil)
 
 		return 3
 	case "ecb":
-		err = a.ecbEncrypt()
+		ciphertext, err = a.ecbEncrypt(plaintext)
 	default:
 		err = errors.New("mode: " + a.Mode + " not supported")
 	}
@@ -57,29 +59,30 @@ func (a *Aes) EncryptL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(lua.LString(a.ciphertext))
+	L.Push(lua.LString(ciphertext))
 	L.Push(lua.LNil)
 
 	return 2
 }
 
-func (a *Aes) DecryptL(L *lua.LState) int {
-	a.ciphertext = L.CheckString(1)
+func (a *Aes) decryptL(L *lua.LState) int {
+	ciphertext := L.CheckString(1)
+	var plaintext string
 	var err error
 	switch a.Mode {
 	case "cbc":
-		err = a.cbcDecrypt()
+		plaintext, err = a.cbcDecrypt(ciphertext)
 	case "cfb":
-		err = a.cfbDecrypt()
+		plaintext, err = a.cfbDecrypt(ciphertext)
 	case "ofb":
-		err = a.ofbDecrypt()
+		plaintext, err = a.ofbDecrypt(ciphertext)
 	case "ctr":
-		err = a.ctrDecrypt()
+		plaintext, err = a.ctrDecrypt(ciphertext)
 	case "gcm":
-		a.tag = L.CheckString(2)
-		err = a.gcmDecrypt()
+		tag := L.CheckString(2)
+		plaintext, err = a.gcmDecrypt(ciphertext, tag)
 	case "ecb":
-		err = a.ecbDecrypt()
+		plaintext, err = a.ecbDecrypt(ciphertext)
 	default:
 		err = errors.New("mode: " + a.Mode + " not supported")
 	}
@@ -89,7 +92,7 @@ func (a *Aes) DecryptL(L *lua.LState) int {
 		return 2
 	}
 
-	L.Push(lua.LString(a.plaintext))
+	L.Push(lua.LString(plaintext))
 	L.Push(lua.LNil)
 
 	return 2
@@ -98,23 +101,20 @@ func (a *Aes) DecryptL(L *lua.LState) int {
 func (a *Aes) Index(L *lua.LState, key string) lua.LValue {
 	switch key {
 	case "encrypt":
-		return L.NewFunction(a.EncryptL)
+		return L.NewFunction(a.encryptL)
 	case "decrypt":
-		return L.NewFunction(a.DecryptL)
+		return L.NewFunction(a.decryptL)
 	default:
 		return lua.LNil
 	}
 }
 
-func NewAesL(L *lua.LState) int {
-	ud := NewUserData(L, &Aes{})
-	a := ud.Value.(*Aes)
+func newAesL(L *lua.LState) int {
+	a := &Aes{}
 
-	if tbl, ok := L.Get(2).(*lua.LTable); ok {
-		_ = LTableToStrut(tbl, a)
-	}
-
-	L.Push(ud)
+	tbl := L.CheckTable(1)
+	_ = core.LTableToStrut(tbl, a)
+	L.Push(a)
 
 	return 1
 }

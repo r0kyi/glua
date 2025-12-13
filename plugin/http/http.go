@@ -4,107 +4,123 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	. "github.com/r0kyi/glua/core"
+	"github.com/r0kyi/glua/core"
 )
 
 type Http struct {
-	url      string
-	Headers  map[string][]string `lua:"headers"`
-	Args     map[string]string   `lua:"args"`
-	Body     string              `lua:"body"`
-	Proxy    string              `lua:"proxy"`
-	Timeout  time.Duration       `lua:"timeout"`
-	client   *resty.Client
-	response *Response
+	Headers map[string][]string `lua:"headers"`
+	Proxy   string              `lua:"proxy"`
+	Timeout time.Duration       `lua:"timeout"`
+
+	client *resty.Client
 }
 
-func (h *Http) get() error {
-	response, err := h.client.R().SetQueryParams(h.Args).Get(h.url)
+func (h *Http) get(url string, args map[string]string) (*Response, error) {
+	response, err := h.client.R().SetQueryParams(args).Get(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	h.response.statusCode = response.StatusCode()
-	h.response.headers = response.Header()
-	h.response.body = B2S(response.Body())
+	r := &Response{
+		headers: make(map[string][]string),
+	}
+	r.statusCode = response.StatusCode()
+	r.headers = response.Header()
+	r.body = core.B2S(response.Body())
 
-	return nil
+	return r, nil
 }
 
-func (h *Http) post() error {
-	response, err := h.client.R().SetBody(h.Body).SetQueryParams(h.Args).Post(h.url)
+func (h *Http) post(url string, args map[string]string, body string) (*Response, error) {
+	response, err := h.client.R().SetBody(body).SetQueryParams(args).Post(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	h.response.statusCode = response.StatusCode()
-	h.response.headers = response.Header()
-	h.response.body = B2S(response.Body())
+	r := &Response{
+		headers: make(map[string][]string),
+	}
+	r.statusCode = response.StatusCode()
+	r.headers = response.Header()
+	r.body = core.B2S(response.Body())
 
-	return nil
+	return r, nil
 }
 
-func (h *Http) put() error {
-	response, err := h.client.R().SetBody(h.Body).SetQueryParams(h.Args).Put(h.url)
+func (h *Http) put(url string, args map[string]string, body string) (*Response, error) {
+	response, err := h.client.R().SetBody(body).SetQueryParams(args).Put(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	h.response.statusCode = response.StatusCode()
-	h.response.headers = response.Header()
-	h.response.body = B2S(response.Body())
+	r := &Response{
+		headers: make(map[string][]string),
+	}
+	r.statusCode = response.StatusCode()
+	r.headers = response.Header()
+	r.body = core.B2S(response.Body())
 
-	return nil
+	return r, nil
 }
 
-func (h *Http) delete() error {
-	response, err := h.client.R().SetBody(h.Body).SetQueryParams(h.Args).Delete(h.url)
+func (h *Http) delete(url string, args map[string]string, body string) (*Response, error) {
+	response, err := h.client.R().SetBody(body).SetQueryParams(args).Delete(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	h.response.statusCode = response.StatusCode()
-	h.response.headers = response.Header()
-	h.response.body = B2S(response.Body())
+	r := &Response{
+		headers: make(map[string][]string),
+	}
+	r.statusCode = response.StatusCode()
+	r.headers = response.Header()
+	r.body = core.B2S(response.Body())
 
-	return nil
+	return r, nil
 }
 
-func (h *Http) patch() error {
-	response, err := h.client.R().SetBody(h.Body).SetQueryParams(h.Args).Patch(h.url)
+func (h *Http) patch(url string, args map[string]string, body string) (*Response, error) {
+	response, err := h.client.R().SetBody(body).SetQueryParams(args).Patch(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	h.response.statusCode = response.StatusCode()
-	h.response.headers = response.Header()
-	h.response.body = B2S(response.Body())
+	r := &Response{
+		headers: make(map[string][]string),
+	}
+	r.statusCode = response.StatusCode()
+	r.headers = response.Header()
+	r.body = core.B2S(response.Body())
 
-	return nil
+	return r, nil
 }
 
-func (h *Http) options() error {
-	response, err := h.client.R().SetQueryParams(h.Args).Options(h.url)
+func (h *Http) options(url string, args map[string]string) (*Response, error) {
+	response, err := h.client.R().SetQueryParams(args).Options(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	h.response.statusCode = response.StatusCode()
-	h.response.headers = response.Header()
-	h.response.body = ""
+	r := &Response{
+		headers: make(map[string][]string),
+	}
+	r.statusCode = response.StatusCode()
+	r.headers = response.Header()
 
-	return nil
+	return r, nil
 }
 
-func (h *Http) head() error {
-	response, err := h.client.R().SetQueryParams(h.Args).Head(h.url)
+func (h *Http) head(url string, args map[string]string) (*Response, error) {
+	response, err := h.client.R().SetQueryParams(args).Head(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	h.response.statusCode = response.StatusCode()
-	h.response.headers = response.Header()
-	h.response.body = ""
+	r := &Response{
+		headers: make(map[string][]string),
+	}
+	r.statusCode = response.StatusCode()
+	r.headers = response.Header()
 
-	return nil
+	return r, nil
 }

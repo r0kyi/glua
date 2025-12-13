@@ -6,28 +6,26 @@ import (
 
 	"github.com/go-co-op/gocron"
 	"github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (c *Cron) String() string {
 	return fmt.Sprintf("glua.cron: %p", c)
 }
 
-func (c *Cron) AssertFunction() lua.LGFunction {
-	return NewCronL
+func (c *Cron) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (c *Cron) MetatableName() string {
-	return "lua.table.cron"
+func (c *Cron) AssertFunction() (*lua.LFunction, bool) {
+	return core.NewFunction(newCronL), true
 }
 
 func (c *Cron) jobL(L *lua.LState) int {
 	cronExpression := L.CheckString(1)
 	fn := L.CheckFunction(2)
-	c.cronExpression = cronExpression
-	c.fn = toJobFun(L, fn)
 
-	err := c.job()
+	err := c.job(cronExpression, toJobFun(L, fn))
 	if err != nil {
 		L.Push(lua.LString(err.Error()))
 	} else {
@@ -40,10 +38,8 @@ func (c *Cron) jobL(L *lua.LState) int {
 func (c *Cron) secondsL(L *lua.LState) int {
 	interval := L.CheckNumber(1)
 	fn := L.CheckFunction(2)
-	c.interval = int(interval)
-	c.fn = toJobFun(L, fn)
 
-	err := c.seconds()
+	err := c.seconds(int(interval), toJobFun(L, fn))
 	if err != nil {
 		L.Push(lua.LString(err.Error()))
 	} else {
@@ -56,10 +52,8 @@ func (c *Cron) secondsL(L *lua.LState) int {
 func (c *Cron) minutesL(L *lua.LState) int {
 	interval := L.CheckNumber(1)
 	fn := L.CheckFunction(2)
-	c.interval = int(interval)
-	c.fn = toJobFun(L, fn)
 
-	err := c.minutes()
+	err := c.minutes(int(interval), toJobFun(L, fn))
 	if err != nil {
 		L.Push(lua.LString(err.Error()))
 	} else {
@@ -72,10 +66,8 @@ func (c *Cron) minutesL(L *lua.LState) int {
 func (c *Cron) hoursL(L *lua.LState) int {
 	interval := L.CheckNumber(1)
 	fn := L.CheckFunction(2)
-	c.interval = int(interval)
-	c.fn = toJobFun(L, fn)
 
-	err := c.hours()
+	err := c.hours(int(interval), toJobFun(L, fn))
 	if err != nil {
 		L.Push(lua.LString(err.Error()))
 	} else {
@@ -88,10 +80,8 @@ func (c *Cron) hoursL(L *lua.LState) int {
 func (c *Cron) daysL(L *lua.LState) int {
 	interval := L.CheckNumber(1)
 	fn := L.CheckFunction(2)
-	c.interval = int(interval)
-	c.fn = toJobFun(L, fn)
 
-	err := c.days()
+	err := c.days(int(interval), toJobFun(L, fn))
 	if err != nil {
 		L.Push(lua.LString(err.Error()))
 	} else {
@@ -104,10 +94,8 @@ func (c *Cron) daysL(L *lua.LState) int {
 func (c *Cron) weeksL(L *lua.LState) int {
 	interval := L.CheckNumber(1)
 	fn := L.CheckFunction(2)
-	c.interval = int(interval)
-	c.fn = toJobFun(L, fn)
 
-	err := c.weeks()
+	err := c.weeks(int(interval), toJobFun(L, fn))
 	if err != nil {
 		L.Push(lua.LString(err.Error()))
 	} else {
@@ -152,11 +140,11 @@ func (c *Cron) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func NewCronL(L *lua.LState) int {
+func newCronL(L *lua.LState) int {
 	location := time.Local
 	var err error
-	if L.GetTop() == 2 {
-		loc := L.CheckString(2)
+	if L.GetTop() == 1 {
+		loc := L.CheckString(1)
 		location, err = time.LoadLocation(loc)
 		if err != nil {
 			location = time.Local
@@ -166,15 +154,13 @@ func NewCronL(L *lua.LState) int {
 	c := &Cron{
 		scheduler: gocron.NewScheduler(location),
 	}
-	ud := core.NewUserData(L, c)
-	L.Push(ud)
+	L.Push(c)
 
 	return 1
 }
 
-func Preload(L *lua.LState) lua.LValue {
+func Preload() lua.LValue {
 	c := &Cron{}
-	ud := core.NewUserData(L, c)
 
-	return ud
+	return c
 }

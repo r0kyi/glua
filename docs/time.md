@@ -10,7 +10,7 @@
 
 | 参数名称 | 参数类型 | 备注     |
 | -------- | -------- | -------- |
-| time     | userdata | 时间模块 |
+| time     | object | 时间模块 |
 
 **demo**
 
@@ -43,7 +43,7 @@ print(t.year())
 
 | 参数名称 | 参数类型 | 备注     |
 | -------- | -------- | -------- |
-| time     | userdata | 时间模块 |
+| time     | object | 时间模块 |
 
 ```lua
 local time = glua.time
@@ -68,7 +68,7 @@ print(t.year())
 
 | 参数名称 | 参数类型 | 备注     |
 | -------- | -------- | -------- |
-| time     | userdata | 时间模块 |
+| time     | object | 时间模块 |
 
 **demo**
 
@@ -95,7 +95,7 @@ print(t.year())
 
 | 参数名称 | 参数类型 | 备注     |
 | -------- | -------- | -------- |
-| time     | userdata | 时间模块 |
+| time     | object | 时间模块 |
 
 **demo**
 
@@ -123,7 +123,7 @@ print(t.year())
 
 | 参数名称 | 参数类型 | 备注     |
 | -------- | -------- | -------- |
-| time     | userdata | 时间模块 |
+| time     | object | 时间模块 |
 
 **demo**
 

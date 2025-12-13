@@ -4,24 +4,14 @@ import (
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
-	. "github.com/r0kyi/glua/core"
+	"github.com/r0kyi/glua/core"
 )
 
 type DataBase struct {
-	driverName     string
-	dataSourceName string
+	DriverName     string `lua:"driver_name"`
+	DataSourceName string `lua:"data_source_name"`
 
 	db *sql.DB
-}
-
-func (db *DataBase) open() error {
-	db_, err := sql.Open(db.driverName, db.dataSourceName)
-	if err != nil {
-		return err
-	}
-	db.db = db_
-
-	return nil
 }
 
 func (db *DataBase) exec(query string, args []any) error {
@@ -60,7 +50,7 @@ func (db *DataBase) query(query string, args []any) ([]map[string]any, error) {
 		for i, col := range cols {
 			v := values[i]
 			if b, ok := v.([]byte); ok {
-				row[col] = B2S(b)
+				row[col] = core.B2S(b)
 			} else {
 				row[col] = v
 			}

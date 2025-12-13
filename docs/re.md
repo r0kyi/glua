@@ -2,8 +2,6 @@
 
 正则模块
 
-## compile
-
 将正则表达式字符串编译成一个可复用的正则对象
 
 **参数值**
@@ -16,8 +14,27 @@
 
 | 参数名称 | 参数类型 | 备注               |
 | -------- | -------- | ------------------ |
-| regexp   | userdata | 编译后的正则表达式 |
+| regexp   | object | 编译后的正则表达式 |
 | err      | string   | 错误返回值         |
+
+**demo**
+
+```lua
+local re = glua.re
+
+local r, err = re("\\d+")
+
+if err ~= nil then
+    print(err)
+    return
+end
+
+print(r.match("123456"))
+print(r.match("re"))
+
+-- true
+-- false
+```
 
 ## match
 
@@ -40,7 +57,7 @@
 ```lua
 local re = glua.re
 
-local r, err = re.compile("\\d+")
+local r, err = re("\\d+")
 
 if err ~= nil then
     print(err)
@@ -75,7 +92,7 @@ print(r.match("re"))
 ```lua
 local re = glua.re
 
-local r, err = re.compile("\\d+")
+local r, err = re("\\d+")
 
 if err ~= nil then
     print(err)
@@ -110,7 +127,7 @@ print(r.find("re123"))
 ```lua
 local re = glua.re
 
-local r, err = re.compile("\\d+")
+local r, err = re("\\d+")
 
 if err ~= nil then
     print(err)
@@ -148,7 +165,7 @@ end
 ```lua
 local re = glua.re
 
-local r, err = re.compile("\\d+")
+local r, err = re("\\d+")
 
 if err ~= nil then
     print(err)
@@ -181,7 +198,7 @@ print(r.replace("123re456", "re"))
 ```lua
 local re = glua.re
 
-local r, err = re.compile("\\d+")
+local r, err = re("\\d+")
 
 if err ~= nil then
     print(err)

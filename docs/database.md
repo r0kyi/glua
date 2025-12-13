@@ -2,22 +2,18 @@
 
 数据库连接
 
-## open
-
-连接数据库
-
 **参数值**
 
-| 参数名称       | 参数类型 | 备注                            |
-| -------------- | -------- | ------------------------------- |
-| driverName     | string   | 驱动名，必须，可选值<br />mysql |
-| dataSourceName | string   | 数据源名称，必须                |
+| 参数名称         | 参数类型 | 备注                            |
+| ---------------- | -------- | ------------------------------- |
+| driver_name      | string   | 驱动名，必须，可选值<br />mysql |
+| data_source_name | string   | 数据源名称，必须                |
 
 **返回值**
 
 | 参数名称 | 参数类型 | 备注       |
 | -------- | -------- | ---------- |
-| db       | userdata | 数据库     |
+| db       | object   | 数据库     |
 | err      | string   | 错误返回值 |
 
 **demo**
@@ -25,7 +21,10 @@
 ```lua
 local database = glua.database
 
-local db, err = database.open("mysql", "root:password@tcp(127.0.0.1:3306)/testdb")
+local db, err = database{
+    driver_name = "mysql",
+    data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
+}
 
 if err ~= nil then
     print(err)
@@ -54,13 +53,16 @@ end
 ```lua
 local database = glua.database
 
-local db, err = database.open("mysql", "root:password@tcp(127.0.0.1:3306)/testdb")
+local db, err = database{
+    driver_name = "mysql",
+    data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
+}
 
 if err ~= nil then
     print(err)
 end
 
-err = db.exec("INSERT INTO `users` (`username`, `password`) VALUES (?,?,?)", "tom", "xxxx")
+local err = db.exec("INSERT INTO `users` (`username`, `password`) VALUES (?, ?)", "tom", "xxxx")
 
 if err ~= nil then
     print(err)
@@ -90,7 +92,10 @@ end
 ```lua
 local database = glua.database
 
-local db, err = database.open("mysql", "root:password@tcp(127.0.0.1:3306)/testdb")
+local db, err = database{
+    driver_name = "mysql",
+    data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
+}
 
 if err ~= nil then
     print(err)

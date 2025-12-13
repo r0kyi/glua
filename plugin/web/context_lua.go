@@ -3,28 +3,33 @@ package web
 import (
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (c *Context) String() string {
 	return fmt.Sprintf("glua.web.context: %p", c)
 }
 
-func (c *Context) AssertFunction() lua.LGFunction {
-	return nil
+func (c *Context) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (c *Context) MetatableName() string {
-	return "lua.table.web.context"
+func (c *Context) AssertFunction() (*lua.LFunction, bool) {
+	return nil, false
 }
 
 func (c *Context) jsonL(L *lua.LState) int {
 	statusCode := L.CheckNumber(1)
 	obj := L.CheckTable(2)
-	c.response.statusCode = int(statusCode)
-	c.response.obj = LTableToMap(obj)
-	c.json()
+
+	obj_, err := core.LTableToMap[any](obj)
+	if err != nil {
+		L.RaiseError(err.Error())
+		return 0
+	}
+
+	c.json(int(statusCode), obj_)
 
 	return 0
 }
@@ -32,9 +37,14 @@ func (c *Context) jsonL(L *lua.LState) int {
 func (c *Context) asciiJsonL(L *lua.LState) int {
 	statusCode := L.CheckNumber(1)
 	obj := L.CheckTable(2)
-	c.response.statusCode = int(statusCode)
-	c.response.obj = LTableToMap(obj)
-	c.asciiJson()
+
+	obj_, err := core.LTableToMap[any](obj)
+	if err != nil {
+		L.RaiseError(err.Error())
+		return 0
+	}
+
+	c.asciiJson(int(statusCode), obj_)
 
 	return 0
 }
@@ -42,12 +52,12 @@ func (c *Context) asciiJsonL(L *lua.LState) int {
 func (c *Context) stringL(L *lua.LState) int {
 	statusCode := L.CheckNumber(1)
 	format := L.CheckString(2)
-	c.response.statusCode = int(statusCode)
-	c.response.format = format
+
+	values := make([]any, 0)
 	for i := 3; i <= L.GetTop(); i++ {
-		c.response.values = append(c.response.values, L.CheckAny(i))
+		values = append(values, L.CheckAny(i))
 	}
-	c.string()
+	c.string(int(statusCode), format, values...)
 
 	return 0
 }
@@ -56,19 +66,22 @@ func (c *Context) htmlL(L *lua.LState) int {
 	statusCode := L.CheckNumber(1)
 	name := L.CheckString(2)
 	obj := L.CheckTable(3)
-	c.response.statusCode = int(statusCode)
-	c.response.name = name
-	c.response.obj = LTableToMap(obj)
-	c.html()
+
+	obj_, err := core.LTableToMap[any](obj)
+	if err != nil {
+		c.json(500, map[string]any{})
+		return 0
+	}
+
+	c.html(int(statusCode), name, obj_)
 
 	return 0
 }
 
 func (c *Context) getCookieL(L *lua.LState) int {
 	name := L.CheckString(1)
-	c.response.name = name
-	c.getCookie()
-	L.Push(lua.LString(c.cookie.value))
+
+	L.Push(lua.LString(c.getCookie(name)))
 
 	return 1
 }
@@ -82,23 +95,15 @@ func (c *Context) setCookieL(L *lua.LState) int {
 	secure := L.CheckBool(6)
 	httpOnly := L.CheckBool(7)
 
-	c.cookie.name = name
-	c.cookie.value = value
-	c.cookie.maxAge = maxAge
-	c.cookie.path = path
-	c.cookie.domain = domain
-	c.cookie.secure = secure
-	c.cookie.httpOnly = httpOnly
-	c.setCookie()
+	c.setCookie(name, value, maxAge, path, domain, secure, httpOnly)
 
 	return 0
 }
 
 func (c *Context) getHeaderL(L *lua.LState) int {
 	key := L.CheckString(1)
-	c.header.key = key
-	c.getHeader()
-	L.Push(lua.LString(c.header.value))
+
+	L.Push(lua.LString(c.getHeader(key)))
 
 	return 1
 }
@@ -106,62 +111,50 @@ func (c *Context) getHeaderL(L *lua.LState) int {
 func (c *Context) setHeaderL(L *lua.LState) int {
 	key := L.CheckString(1)
 	value := L.CheckString(2)
-	c.header.key = key
-	c.header.value = value
-	c.setHeader()
+
+	c.setHeader(key, value)
 
 	return 0
 }
 
 func (c *Context) getQueryL(L *lua.LState) int {
 	key := L.CheckString(1)
-	c.query.key = key
-	c.getQuery()
-	L.Push(lua.LString(c.query.value))
+
+	L.Push(lua.LString(c.getQuery(key)))
 
 	return 1
 }
 
 func (c *Context) getFormL(L *lua.LState) int {
 	key := L.CheckString(1)
-	c.form.key = key
-	c.getForm()
-	L.Push(lua.LString(c.form.value))
+
+	L.Push(lua.LString(c.getForm(key)))
 
 	return 1
 }
 
 func (c *Context) getParamL(L *lua.LState) int {
 	key := L.CheckString(1)
-	c.param.key = key
-	c.getParam()
-	L.Push(lua.LString(c.param.value))
+
+	L.Push(lua.LString(c.getParam(key)))
 
 	return 1
 }
 
 func (c *Context) bodyL() string {
-	c.body()
-
-	return c.request.body
+	return c.body()
 }
 
 func (c *Context) methodL() string {
-	c.method()
-
-	return c.request.method
+	return c.method()
 }
 
 func (c *Context) pathL() string {
-	c.path()
-
-	return c.request.path
+	return c.path()
 }
 
 func (c *Context) uriL() string {
-	c.uri()
-
-	return c.request.uri
+	return c.uri()
 }
 
 func (c *Context) Index(L *lua.LState, key string) lua.LValue {

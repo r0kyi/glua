@@ -3,34 +3,39 @@ package yaml
 import (
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (y *Yaml) String() string {
 	return fmt.Sprintf("glua.yaml: %p", y)
 }
 
-func (y *Yaml) AssertFunction() lua.LGFunction {
-	return nil
+func (y *Yaml) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (y *Yaml) MetatableName() string {
-	return "lua.table.yaml"
+func (y *Yaml) AssertFunction() (*lua.LFunction, bool) {
+	return nil, false
 }
 
 func (y *Yaml) encodeL(L *lua.LState) int {
 	yaml := L.CheckTable(1)
-	y.yaml = LTableToMap(yaml)
-
-	err := y.encode()
+	yaml_, err := core.LTableToMap[any](yaml)
 	if err != nil {
 		L.Push(lua.LNil)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
-	L.Push(lua.LString(y.raw))
+	raw, err := y.encode(yaml_)
+	if err != nil {
+		L.Push(lua.LNil)
+		L.Push(lua.LString(err.Error()))
+		return 2
+	}
+
+	L.Push(lua.LString(raw))
 	L.Push(lua.LNil)
 
 	return 2
@@ -38,16 +43,15 @@ func (y *Yaml) encodeL(L *lua.LState) int {
 
 func (y *Yaml) decodeL(L *lua.LState) int {
 	raw := L.CheckString(1)
-	y.raw = raw
 
-	err := y.decode()
+	yaml, err := y.decode(raw)
 	if err != nil {
 		L.Push(lua.LNil)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
-	L.Push(MapToLTable(L, y.yaml))
+	L.Push(core.MapToLTable(L, yaml))
 	L.Push(lua.LNil)
 
 	return 2
@@ -64,9 +68,8 @@ func (y *Yaml) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func Preload(L *lua.LState) lua.LValue {
+func Preload() lua.LValue {
 	y := &Yaml{}
-	ud := NewUserData(L, y)
 
-	return ud
+	return y
 }

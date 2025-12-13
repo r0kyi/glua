@@ -4,44 +4,38 @@ import (
 	"errors"
 
 	"github.com/golang-jwt/jwt/v5"
-	. "github.com/r0kyi/glua/core"
+	"github.com/r0kyi/glua/core"
 )
 
-type JWT struct {
-	key string
-	alg string
-	raw string
-	jwt map[string]any
+type Jwt struct {
 }
 
-func (j *JWT) sign() error {
-	claims := jwt.MapClaims(j.jwt)
-	token := jwt.NewWithClaims(getSigningMethod(j.alg), claims)
+func (j *Jwt) sign(key string, alg string, jwt_ map[string]any) (string, error) {
+	claims := jwt.MapClaims(jwt_)
+	token := jwt.NewWithClaims(getSigningMethod(alg), claims)
 
-	raw, err := token.SignedString(S2B(j.key))
+	raw, err := token.SignedString(core.S2B(key))
 	if err != nil {
-		return err
+		return "", err
 	}
-	j.raw = raw
 
-	return nil
+	return raw, nil
 }
 
-func (j *JWT) verify() error {
-	token, err := jwt.Parse(j.raw, func(_ *jwt.Token) (any, error) {
-		return S2B(j.key), nil
+func (j *Jwt) verify(key string, raw string) (map[string]any, error) {
+	token, err := jwt.Parse(raw, func(_ *jwt.Token) (any, error) {
+		return core.S2B(key), nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
+	jwt, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return errors.New("invalid token")
+		return nil, errors.New("invalid token")
 	}
-	j.jwt = claims
 
-	return nil
+	return jwt, nil
 }
 
 func getSigningMethod(alg string) jwt.SigningMethod {

@@ -3,34 +3,34 @@ package json
 import (
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (j *Json) String() string {
 	return fmt.Sprintf("glua.json: %p", j)
 }
 
-func (j *Json) AssertFunction() lua.LGFunction {
-	return nil
+func (j *Json) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (j *Json) MetatableName() string {
-	return "lua.table.json"
+func (j *Json) AssertFunction() (*lua.LFunction, bool) {
+	return nil, false
 }
 
 func (j *Json) encodeL(L *lua.LState) int {
 	json := L.CheckTable(1)
-	j.json = LTableToMap(json)
+	json_, err := core.LTableToMap[any](json)
 
-	err := j.encode()
+	raw, err := j.encode(json_)
 	if err != nil {
 		L.Push(lua.LNil)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
-	L.Push(lua.LString(j.raw))
+	L.Push(lua.LString(raw))
 	L.Push(lua.LNil)
 
 	return 2
@@ -38,20 +38,20 @@ func (j *Json) encodeL(L *lua.LState) int {
 
 func (j *Json) decodeL(L *lua.LState) int {
 	raw := L.CheckString(1)
-	j.raw = raw
 
-	err := j.decode()
+	json, err := j.decode(raw)
 	if err != nil {
 		L.Push(lua.LNil)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
-	L.Push(MapToLTable(L, j.json))
+	L.Push(core.MapToLTable(L, json))
 	L.Push(lua.LNil)
 
 	return 2
 }
+
 func (j *Json) Index(L *lua.LState, key string) lua.LValue {
 	switch key {
 	case "encode":
@@ -63,9 +63,8 @@ func (j *Json) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func Preload(L *lua.LState) lua.LValue {
+func Preload() lua.LValue {
 	j := &Json{}
-	ud := NewUserData(L, j)
 
-	return ud
+	return j
 }

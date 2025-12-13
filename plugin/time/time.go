@@ -6,48 +6,36 @@ import (
 
 type Time struct {
 	time *time.Time
-
-	year  int
-	month int
-	day   int
-	hour  int
-	min   int
-	sec   int
-	nsec  int
-	loc   string
-
-	layout    string
-	formatted string
 }
 
-func (t *Time) getYear() {
-	t.year = t.time.Year()
+func (t *Time) getYear() int {
+	return t.time.Year()
 }
 
-func (t *Time) getMonth() {
-	t.month = int(t.time.Month())
+func (t *Time) getMonth() int {
+	return int(t.time.Month())
 }
 
-func (t *Time) getDay() {
-	t.day = t.time.Day()
+func (t *Time) getDay() int {
+	return t.time.Day()
 }
 
-func (t *Time) getHour() {
-	t.hour = t.time.Hour()
+func (t *Time) getHour() int {
+	return t.time.Hour()
 }
 
-func (t *Time) getMinute() {
-	t.min = t.time.Minute()
+func (t *Time) getMinute() int {
+	return t.time.Minute()
 }
 
-func (t *Time) getSecond() {
-	t.sec = t.time.Second()
+func (t *Time) getSecond() int {
+	return t.time.Second()
 }
 
-func (t *Time) getNanosecond() {
-	t.nsec = t.time.Nanosecond()
+func (t *Time) getNanosecond() int {
+	return t.time.Nanosecond()
 }
 
-func (t *Time) format() {
-	t.formatted = t.time.Format(t.layout)
+func (t *Time) format(layout string) string {
+	return t.time.Format(layout)
 }

@@ -2,29 +2,27 @@ package yaml
 
 import (
 	"github.com/goccy/go-yaml"
-	. "github.com/r0kyi/glua/core"
+	"github.com/r0kyi/glua/core"
 )
 
 type Yaml struct {
-	raw  string
-	yaml map[string]any
 }
 
-func (y *Yaml) encode() error {
-	marshal, err := yaml.Marshal(y.yaml)
+func (y *Yaml) encode(yaml_ map[string]any) (string, error) {
+	raw, err := yaml.Marshal(yaml_)
 	if err != nil {
-		return err
+		return "", err
 	}
-	y.raw = B2S(marshal)
 
-	return nil
+	return core.B2S(raw), nil
 }
 
-func (y *Yaml) decode() error {
-	err := yaml.Unmarshal(S2B(y.raw), &y.yaml)
+func (y *Yaml) decode(raw string) (map[string]any, error) {
+	yaml_ := make(map[string]any)
+	err := yaml.Unmarshal(core.S2B(raw), &yaml_)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return yaml_, nil
 }

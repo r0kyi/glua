@@ -3,38 +3,38 @@ package web
 import (
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (s *Session) String() string {
 	return fmt.Sprintf("glua.web.session: %p", s)
 }
 
-func (s *Session) AssertFunction() lua.LGFunction {
-	return NewSessionL
+func (s *Session) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (s *Session) MetatableName() string {
-	return "lua.table.web.session"
+func (s *Session) AssertFunction() (*lua.LFunction, bool) {
+	return core.NewFunction(newSessionL), true
 }
 
 func (s *Session) defaultL(L *lua.LState) int {
-	context := L.CheckUserData(1)
+	context := L.CheckAny(1)
 	if context == nil {
 		return 0
 	}
-	s.context = context.Value.(*Context).context
-	s.default_()
+
+	context_ := context.(*Context).context
+	s.default_(context_)
 
 	return 0
 }
 
 func (s *Session) getL(L *lua.LState) int {
 	key := L.CheckString(1)
-	s.sess.key = key
-	s.get()
-	L.Push(lua.LString(s.sess.value))
+
+	L.Push(lua.LString(s.get(key)))
 
 	return 1
 }
@@ -42,17 +42,16 @@ func (s *Session) getL(L *lua.LState) int {
 func (s *Session) setL(L *lua.LState) int {
 	key := L.CheckString(1)
 	value := L.CheckString(2)
-	s.sess.key = key
-	s.sess.value = value
-	s.set()
+
+	s.set(key, value)
 
 	return 0
 }
 
 func (s *Session) deleteL(L *lua.LState) int {
 	key := L.CheckString(1)
-	s.sess.key = key
-	s.delete()
+
+	s.delete(key)
 
 	return 0
 }
@@ -94,15 +93,13 @@ func (s *Session) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func NewSessionL(L *lua.LState) int {
-	ud := NewUserData(L, &Session{})
-	s := ud.Value.(*Session)
+func newSessionL(L *lua.LState) int {
+	s := &Session{}
 
-	if tbl, ok := L.Get(2).(*lua.LTable); ok {
-		_ = LTableToStrut(tbl, s)
-	}
+	tbl := L.CheckTable(1)
+	_ = core.LTableToStrut(tbl, s)
 	s.newStore()
-	L.Push(ud)
+	L.Push(s)
 
 	return 1
 }

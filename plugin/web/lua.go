@@ -4,28 +4,27 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (w *Web) String() string {
 	return fmt.Sprintf("glua.web: %p", w)
 }
 
-func (w *Web) AssertFunction() lua.LGFunction {
-	return NewWebL
+func (w *Web) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (w *Web) MetatableName() string {
-	return "lua.table.web"
+func (w *Web) AssertFunction() (*lua.LFunction, bool) {
+	return core.NewFunction(newWebL), true
 }
 
 func (w *Web) getL(L *lua.LState) int {
 	path := L.CheckString(1)
 	fn := L.CheckFunction(2)
-	w.route.path = path
-	w.route.fn = w.toHandler(L, fn)
-	w.get()
+
+	w.get(path, w.toHandler(L, fn))
 
 	return 0
 }
@@ -33,9 +32,8 @@ func (w *Web) getL(L *lua.LState) int {
 func (w *Web) postL(L *lua.LState) int {
 	path := L.CheckString(1)
 	fn := L.CheckFunction(2)
-	w.route.path = path
-	w.route.fn = w.toHandler(L, fn)
-	w.post()
+
+	w.post(path, w.toHandler(L, fn))
 
 	return 0
 }
@@ -43,9 +41,8 @@ func (w *Web) postL(L *lua.LState) int {
 func (w *Web) putL(L *lua.LState) int {
 	path := L.CheckString(1)
 	fn := L.CheckFunction(2)
-	w.route.path = path
-	w.route.fn = w.toHandler(L, fn)
-	w.put()
+
+	w.put(path, w.toHandler(L, fn))
 
 	return 0
 }
@@ -53,9 +50,8 @@ func (w *Web) putL(L *lua.LState) int {
 func (w *Web) deleteL(L *lua.LState) int {
 	path := L.CheckString(1)
 	fn := L.CheckFunction(2)
-	w.route.path = path
-	w.route.fn = w.toHandler(L, fn)
-	w.delete()
+
+	w.delete(path, w.toHandler(L, fn))
 
 	return 0
 }
@@ -63,9 +59,8 @@ func (w *Web) deleteL(L *lua.LState) int {
 func (w *Web) patchL(L *lua.LState) int {
 	path := L.CheckString(1)
 	fn := L.CheckFunction(2)
-	w.route.path = path
-	w.route.fn = w.toHandler(L, fn)
-	w.patch()
+
+	w.patch(path, w.toHandler(L, fn))
 
 	return 0
 }
@@ -73,9 +68,8 @@ func (w *Web) patchL(L *lua.LState) int {
 func (w *Web) optionsL(L *lua.LState) int {
 	path := L.CheckString(1)
 	fn := L.CheckFunction(2)
-	w.route.path = path
-	w.route.fn = w.toHandler(L, fn)
-	w.options()
+
+	w.options(path, w.toHandler(L, fn))
 
 	return 0
 }
@@ -83,19 +77,19 @@ func (w *Web) optionsL(L *lua.LState) int {
 func (w *Web) headL(L *lua.LState) int {
 	path := L.CheckString(1)
 	fn := L.CheckFunction(2)
-	w.route.path = path
-	w.route.fn = w.toHandler(L, fn)
-	w.head()
+
+	w.head(path, w.toHandler(L, fn))
 
 	return 0
 }
 
 func (w *Web) useL(L *lua.LState) int {
-	session := L.CheckUserData(1)
+	session := L.CheckAny(1)
 	if session == nil {
 		return 0
 	}
-	w.session = session.Value.(*Session)
+
+	w.session = session.(*Session)
 	w.use()
 
 	return 0
@@ -133,21 +127,18 @@ func (w *Web) Index(L *lua.LState, key string) lua.LValue {
 	case "run":
 		return L.NewFunction(w.runL)
 	case "session":
-		return NewUserData(L, w.session)
+		return w.session
 	default:
 		return lua.LNil
 	}
 }
 
-func NewWebL(L *lua.LState) int {
-	ud := NewUserData(L, &Web{
-		context: &Context{},
-	})
-	w := ud.Value.(*Web)
+func newWebL(L *lua.LState) int {
+	w := &Web{}
 
-	if tbl, ok := L.Get(2).(*lua.LTable); ok {
-		_ = LTableToStrut(tbl, w)
-	}
+	tbl := L.CheckTable(1)
+	_ = core.LTableToStrut(tbl, w)
+
 	switch w.Mode {
 	case "debug":
 		gin.SetMode(gin.DebugMode)
@@ -158,6 +149,7 @@ func NewWebL(L *lua.LState) int {
 	default:
 		gin.SetMode(gin.DebugMode)
 	}
+
 	w.engine = gin.Default()
 	if w.Pattern != "" {
 		w.engine.LoadHTMLGlob(w.Pattern)
@@ -168,14 +160,14 @@ func NewWebL(L *lua.LState) int {
 	if len(w.TrustedProxies) > 0 {
 		w.engine.SetTrustedProxies(w.TrustedProxies)
 	}
-	L.Push(ud)
+
+	L.Push(w)
 
 	return 1
 }
 
-func Preload(L *lua.LState) lua.LValue {
+func Preload() lua.LValue {
 	w := &Web{}
-	ud := NewUserData(L, w)
 
-	return ud
+	return w
 }

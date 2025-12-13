@@ -3,29 +3,28 @@ package json
 import (
 	"encoding/json"
 
-	. "github.com/r0kyi/glua/core"
+	"github.com/r0kyi/glua/core"
 )
 
 type Json struct {
-	raw  string
-	json map[string]any
 }
 
-func (j *Json) encode() error {
-	marshal, err := json.Marshal(j.json)
+func (j *Json) encode(json_ map[string]any) (string, error) {
+	marshal, err := json.Marshal(json_)
 	if err != nil {
-		return err
+		return "", err
 	}
-	j.raw = B2S(marshal)
+	raw := core.B2S(marshal)
 
-	return nil
+	return raw, nil
 }
 
-func (j *Json) decode() error {
-	err := json.Unmarshal(S2B(j.raw), &j.json)
+func (j *Json) decode(raw string) (map[string]any, error) {
+	json_ := make(map[string]any)
+	err := json.Unmarshal(core.S2B(raw), &json_)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return json_, nil
 }

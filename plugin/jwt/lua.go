@@ -3,63 +3,65 @@ package jwt
 import (
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
-func (j *JWT) String() string {
+func (j *Jwt) String() string {
 	return fmt.Sprintf("glua.jwt: %p", j)
 }
 
-func (j *JWT) AssertFunction() lua.LGFunction {
-	return nil
+func (j *Jwt) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (j *JWT) MetatableName() string {
-	return "lua.table.jwt"
+func (j *Jwt) AssertFunction() (*lua.LFunction, bool) {
+	return nil, false
 }
 
-func (j *JWT) signL(L *lua.LState) int {
+func (j *Jwt) signL(L *lua.LState) int {
 	key := L.CheckString(1)
 	alg := L.CheckString(2)
 	jwt := L.CheckTable(3)
-	j.key = key
-	j.alg = alg
-	j.jwt = LTableToMap(jwt)
 
-	err := j.sign()
+	jwt_, err := core.LTableToMap[any](jwt)
 	if err != nil {
 		L.Push(lua.LNil)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
-	L.Push(lua.LString(j.raw))
+	raw, err := j.sign(key, alg, jwt_)
+	if err != nil {
+		L.Push(lua.LNil)
+		L.Push(lua.LString(err.Error()))
+		return 2
+	}
+
+	L.Push(lua.LString(raw))
 	L.Push(lua.LNil)
 
 	return 2
 }
 
-func (j *JWT) verifyL(L *lua.LState) int {
+func (j *Jwt) verifyL(L *lua.LState) int {
 	key := L.CheckString(1)
 	raw := L.CheckString(2)
-	j.key = key
-	j.raw = raw
 
-	err := j.verify()
+	jwt, err := j.verify(key, raw)
 	if err != nil {
 		L.Push(lua.LNil)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
-	L.Push(MapToLTable(L, j.jwt))
+	L.Push(core.MapToLTable(L, jwt))
 	L.Push(lua.LNil)
 
 	return 2
 }
 
-func (j *JWT) Index(L *lua.LState, key string) lua.LValue {
+func (j *Jwt) Index(L *lua.LState, key string) lua.LValue {
 	switch key {
 	case "sign":
 		return L.NewFunction(j.signL)
@@ -70,9 +72,8 @@ func (j *JWT) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func Preload(L *lua.LState) lua.LValue {
-	j := &JWT{}
-	ud := NewUserData(L, j)
+func Preload() lua.LValue {
+	j := &Jwt{}
 
-	return ud
+	return j
 }

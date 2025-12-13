@@ -5,7 +5,7 @@ import (
 	"math"
 	"reflect"
 
-	lua "github.com/yuin/gopher-lua"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func LTableToStrut(tbl *lua.LTable, out any) error {
@@ -160,17 +160,43 @@ func setValue(lv lua.LValue, fv reflect.Value) error {
 	return nil
 }
 
-func LTableToMap(tbl *lua.LTable) map[string]any {
-	result := make(map[string]any)
+func LTableToMap[T any](tbl *lua.LTable) (map[string]T, error) {
+	result := make(map[string]T)
+
 	tbl.ForEach(func(key lua.LValue, value lua.LValue) {
 		k := key.String()
-		result[k] = lValueToGo(value)
+
+		goVal, err := lValueToTypedGo[T](value)
+		if err != nil {
+			panic(fmt.Errorf("failed to convert key '%s': %v", k, err))
+		}
+
+		result[k] = goVal
 	})
 
-	return result
+	return result, nil
 }
 
-func lValueToGo(val lua.LValue) any {
+func lValueToTypedGo[T any](v lua.LValue) (T, error) {
+	var zero T
+	raw := lValueToGoAny(v)
+
+	targetType := reflect.TypeOf((*T)(nil)).Elem()
+	rawVal := reflect.ValueOf(raw)
+
+	if rawVal.Type().AssignableTo(targetType) {
+		return raw.(T), nil
+	}
+
+	if rawVal.Type().ConvertibleTo(targetType) {
+		converted := rawVal.Convert(targetType)
+		return converted.Interface().(T), nil
+	}
+
+	return zero, fmt.Errorf("cannot convert %T to %T", raw, zero)
+}
+
+func lValueToGoAny(val lua.LValue) any {
 	switch v := val.(type) {
 	case lua.LBool:
 		return bool(v)
@@ -179,6 +205,7 @@ func lValueToGo(val lua.LValue) any {
 	case lua.LString:
 		return string(v)
 	case *lua.LTable:
+		// 检查是否为数组
 		arr := make([]any, 0)
 		m := make(map[string]any)
 		isArray := true
@@ -195,10 +222,10 @@ func lValueToGo(val lua.LValue) any {
 				}
 			}
 
-			if !isArray {
-				m[key.String()] = lValueToGo(value)
+			if isArray {
+				arr = append(arr, lValueToGoAny(value))
 			} else {
-				arr = append(arr, lValueToGo(value))
+				m[key.String()] = lValueToGoAny(value)
 			}
 		})
 
@@ -206,10 +233,10 @@ func lValueToGo(val lua.LValue) any {
 			return arr
 		}
 		return m
-	case *lua.LFunction:
-		return v.String()
 	case *lua.LUserData:
 		return v.Value
+	case *lua.LFunction:
+		return v.String()
 	default:
 		return v.String()
 	}

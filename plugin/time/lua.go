@@ -4,77 +4,67 @@ import (
 	"fmt"
 	"time"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (t *Time) String() string {
 	return fmt.Sprintf("glua.time: %p", t)
 }
 
-func (t *Time) AssertFunction() lua.LGFunction {
-	return nil
+func (t *Time) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (t *Time) MetatableName() string {
-	return "lua.table.time"
+func (t *Time) AssertFunction() (*lua.LFunction, bool) {
+	return nil, false
 }
 
 func (t *Time) yearL(L *lua.LState) int {
-	t.getYear()
-	L.Push(lua.LNumber(t.year))
+	L.Push(lua.LNumber(t.getYear()))
 
 	return 1
 }
 
 func (t *Time) monthL(L *lua.LState) int {
-	t.getMonth()
-	L.Push(lua.LNumber(t.month))
+	L.Push(lua.LNumber(t.getMonth()))
 
 	return 1
 }
 
 func (t *Time) dayL(L *lua.LState) int {
-	t.getDay()
-	L.Push(lua.LNumber(t.day))
+	L.Push(lua.LNumber(t.getDay()))
 
 	return 1
 }
 
 func (t *Time) hourL(L *lua.LState) int {
-	t.getHour()
-	L.Push(lua.LNumber(t.hour))
+	L.Push(lua.LNumber(t.getHour()))
 
 	return 1
 }
 
 func (t *Time) minuteL(L *lua.LState) int {
-	t.getMinute()
-	L.Push(lua.LNumber(t.min))
+	L.Push(lua.LNumber(t.getMinute()))
 
 	return 1
 }
 
 func (t *Time) secondL(L *lua.LState) int {
-	t.getSecond()
-	L.Push(lua.LNumber(t.sec))
+	L.Push(lua.LNumber(t.getSecond()))
 
 	return 1
 }
 
 func (t *Time) nanosecondL(L *lua.LState) int {
-	t.getNanosecond()
-	L.Push(lua.LNumber(t.nsec))
+	L.Push(lua.LNumber(t.getNanosecond()))
 
 	return 1
 }
 
 func (t *Time) formatL(L *lua.LState) int {
 	layout := L.CheckString(1)
-	t.layout = layout
-	t.format()
 
-	L.Push(lua.LString(t.formatted))
+	L.Push(lua.LString(t.format(layout)))
 
 	return 1
 }
@@ -117,9 +107,8 @@ func nowL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := NewUserData(L, t)
 
-	L.Push(ud)
+	L.Push(t)
 
 	return 1
 }
@@ -140,13 +129,11 @@ func dateL(L *lua.LState) int {
 	}
 
 	newT := time.Date(int(year), time.Month(month), int(day), int(hour), int(min_), int(sec), int(nsec), lo)
-
 	t := &Time{
 		time: &newT,
 	}
-	ud := NewUserData(L, t)
 
-	L.Push(ud)
+	L.Push(t)
 
 	return 1
 }
@@ -159,9 +146,8 @@ func unixL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := NewUserData(L, t)
 
-	L.Push(ud)
+	L.Push(t)
 
 	return 1
 }
@@ -179,9 +165,8 @@ func parseL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := NewUserData(L, t)
 
-	L.Push(ud)
+	L.Push(t)
 
 	return 1
 }
@@ -205,17 +190,15 @@ func parseInLocationL(L *lua.LState) int {
 	t := &Time{
 		time: &newT,
 	}
-	ud := NewUserData(L, t)
 
-	L.Push(ud)
+	L.Push(t)
 
 	return 1
 
 }
 
-func Preload(L *lua.LState) lua.LValue {
+func Preload() lua.LValue {
 	t := &Time{}
-	ud := NewUserData(L, t)
 
-	return ud
+	return t
 }

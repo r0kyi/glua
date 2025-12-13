@@ -1,41 +1,23 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 
-	. "github.com/r0kyi/glua/core"
-	lua "github.com/yuin/gopher-lua"
+	"github.com/r0kyi/glua/core"
+	lua "github.com/r0kyi/gopher-lua"
 )
 
 func (db *DataBase) String() string {
 	return fmt.Sprintf("glua.database: %p", db)
 }
 
-func (db *DataBase) AssertFunction() lua.LGFunction {
-	return nil
+func (db *DataBase) Type() lua.LValueType {
+	return lua.LTObject
 }
 
-func (db *DataBase) MetatableName() string {
-	return "lua.table.database"
-}
-
-func (db *DataBase) openL(L *lua.LState) int {
-	driverName := L.CheckString(1)
-	dataSourceName := L.CheckString(2)
-	db.driverName = driverName
-	db.dataSourceName = dataSourceName
-
-	err := db.open()
-	if err != nil {
-		L.Push(lua.LNil)
-		L.Push(lua.LString(err.Error()))
-		return 2
-	}
-
-	ud := NewUserData(L, db)
-	L.Push(ud)
-	L.Push(lua.LNil)
-	return 2
+func (db *DataBase) AssertFunction() (*lua.LFunction, bool) {
+	return core.NewFunction(newDataBaseL), true
 }
 
 func (db *DataBase) execL(L *lua.LState) int {
@@ -69,16 +51,15 @@ func (db *DataBase) queryL(L *lua.LState) int {
 		return 2
 	}
 
-	t := SliceMapToLTable(L, rows)
-	L.Push(t)
+	tbl := core.MapToLTable(L, rows)
+	L.Push(tbl)
 	L.Push(lua.LNil)
+
 	return 2
 }
 
 func (db *DataBase) Index(L *lua.LState, key string) lua.LValue {
 	switch key {
-	case "open":
-		return L.NewFunction(db.openL)
 	case "exec":
 		return L.NewFunction(db.execL)
 	case "query":
@@ -88,9 +69,28 @@ func (db *DataBase) Index(L *lua.LState, key string) lua.LValue {
 	}
 }
 
-func Preload(L *lua.LState) lua.LValue {
+func newDataBaseL(L *lua.LState) int {
 	db := &DataBase{}
-	ud := NewUserData(L, db)
 
-	return ud
+	tbl := L.CheckTable(1)
+	_ = core.LTableToStrut(tbl, db)
+
+	db_, err := sql.Open(db.DriverName, db.DataSourceName)
+	if err != nil {
+		L.Push(lua.LNil)
+		L.Push(lua.LString(err.Error()))
+		return 2
+	}
+	db.db = db_
+
+	L.Push(db)
+	L.Push(lua.LNil)
+
+	return 2
+}
+
+func Preload() lua.LValue {
+	db := &DataBase{}
+
+	return db
 }
