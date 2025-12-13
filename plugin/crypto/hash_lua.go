@@ -26,6 +26,7 @@ func (h *Hash) md4L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.md4(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -39,6 +40,7 @@ func (h *Hash) md5L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.md5(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -52,6 +54,7 @@ func (h *Hash) ripemd160L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.ripemd160(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -65,6 +68,7 @@ func (h *Hash) sha1L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha1(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -78,6 +82,7 @@ func (h *Hash) sha3224L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha3224(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -91,6 +96,7 @@ func (h *Hash) sha3256L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha3256(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -104,6 +110,7 @@ func (h *Hash) sha3384L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha3384(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -117,6 +124,7 @@ func (h *Hash) sha3512L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha3512(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -130,6 +138,7 @@ func (h *Hash) sha224L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha224(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -143,6 +152,7 @@ func (h *Hash) sha256L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha256(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -156,6 +166,7 @@ func (h *Hash) sha384L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha384(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -169,6 +180,7 @@ func (h *Hash) sha512L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha512(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -182,6 +194,7 @@ func (h *Hash) sha512224L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha512224(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -195,6 +208,7 @@ func (h *Hash) sha512256L(L *lua.LState) int {
 
 	plaintext := L.CheckString(1)
 	ciphertext := h.sha512256(plaintext)
+
 	L.Push(lua.LString(ciphertext))
 
 	return 1
@@ -244,11 +258,13 @@ func (h *Hash) blake2s256L(L *lua.LState) int {
 		}
 
 		L.Push(lua.LString(ciphertext))
-		return 1
-	} else {
-		L.Push(lua.LNil)
+
 		return 1
 	}
+
+	L.Push(lua.LNil)
+
+	return 1
 }
 
 func (h *Hash) blake2b256L(L *lua.LState) int {
@@ -277,10 +293,11 @@ func (h *Hash) blake2b256L(L *lua.LState) int {
 		L.Push(lua.LString(ciphertext))
 
 		return 1
-	} else {
-		L.Push(lua.LNil)
-		return 1
 	}
+
+	L.Push(lua.LNil)
+
+	return 1
 }
 
 func (h *Hash) blake2b384L(L *lua.LState) int {
@@ -309,10 +326,11 @@ func (h *Hash) blake2b384L(L *lua.LState) int {
 		L.Push(lua.LString(ciphertext))
 
 		return 1
-	} else {
-		L.Push(lua.LNil)
-		return 1
 	}
+
+	L.Push(lua.LNil)
+
+	return 1
 }
 
 func (h *Hash) blake2b512L(L *lua.LState) int {
@@ -341,10 +359,11 @@ func (h *Hash) blake2b512L(L *lua.LState) int {
 		L.Push(lua.LString(ciphertext))
 
 		return 1
-	} else {
-		L.Push(lua.LNil)
-		return 1
 	}
+
+	L.Push(lua.LNil)
+
+	return 1
 }
 
 func (h *Hash) Index(L *lua.LState, key string) lua.LValue {

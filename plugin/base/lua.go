@@ -23,6 +23,7 @@ func (b *Base) AssertFunction() (*lua.LFunction, bool) {
 func (b *Base) base32EncodeL(L *lua.LState) int {
 	raw := L.CheckString(1)
 	encoded := b.base32Encode(raw)
+
 	L.Push(lua.LString(encoded))
 
 	return 1
@@ -31,6 +32,7 @@ func (b *Base) base32EncodeL(L *lua.LState) int {
 func (b *Base) base32DecodeL(L *lua.LState) int {
 	encoded := L.CheckString(1)
 	raw := b.base32Decode(encoded)
+
 	L.Push(lua.LString(raw))
 
 	return 1
@@ -39,6 +41,7 @@ func (b *Base) base32DecodeL(L *lua.LState) int {
 func (b *Base) base64EncodeL(L *lua.LState) int {
 	raw := L.CheckString(1)
 	encoded := b.base64Encode(raw)
+
 	L.Push(lua.LString(encoded))
 
 	return 1
@@ -47,6 +50,7 @@ func (b *Base) base64EncodeL(L *lua.LState) int {
 func (b *Base) base64DecodeL(L *lua.LState) int {
 	encoded := L.CheckString(1)
 	raw := b.base64Decode(encoded)
+
 	L.Push(lua.LString(raw))
 
 	return 1

@@ -22,6 +22,7 @@ func (r *Re) AssertFunction() (*lua.LFunction, bool) {
 
 func (r *Re) matchStringL(L *lua.LState) int {
 	src := L.CheckString(1)
+
 	L.Push(lua.LBool(r.matchString(src)))
 
 	return 1
@@ -29,6 +30,7 @@ func (r *Re) matchStringL(L *lua.LState) int {
 
 func (r *Re) findStringL(L *lua.LState) int {
 	src := L.CheckString(1)
+
 	L.Push(lua.LString(r.findString(src)))
 
 	return 1
@@ -42,6 +44,7 @@ func (r *Re) findAllStringL(L *lua.LState) int {
 	for _, str := range arr {
 		tbl.Append(lua.LString(str))
 	}
+
 	L.Push(tbl)
 
 	return 1
@@ -50,6 +53,7 @@ func (r *Re) findAllStringL(L *lua.LState) int {
 func (r *Re) replaceAllStringL(L *lua.LState) int {
 	src := L.CheckString(1)
 	repl := L.CheckString(2)
+
 	L.Push(lua.LString(r.replaceAllString(src, repl)))
 
 	return 1
@@ -63,6 +67,7 @@ func (r *Re) splitL(L *lua.LState) int {
 	for _, str := range arr {
 		tbl.Append(lua.LString(str))
 	}
+
 	L.Push(tbl)
 
 	return 1

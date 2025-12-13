@@ -34,6 +34,7 @@ func (db *DataBase) execL(L *lua.LState) int {
 	}
 
 	L.Push(lua.LNil)
+
 	return 1
 }
 

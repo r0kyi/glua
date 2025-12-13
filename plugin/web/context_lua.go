@@ -57,6 +57,7 @@ func (c *Context) stringL(L *lua.LState) int {
 	for i := 3; i <= L.GetTop(); i++ {
 		values = append(values, L.CheckAny(i))
 	}
+
 	c.string(int(statusCode), format, values...)
 
 	return 0
