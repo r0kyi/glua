@@ -3,7 +3,9 @@ package database
 import (
 	"database/sql"
 
+	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/r0kyi/glua/core"
 )
 
@@ -29,15 +31,15 @@ func (db *DataBase) query(query string, args []any) ([]map[string]any, error) {
 	}
 	defer rows.Close()
 
-	cols, err := rows.Columns()
+	columns, err := rows.Columns()
 	if err != nil {
 		return nil, err
 	}
 
 	var results []map[string]any
 	for rows.Next() {
-		values := make([]any, len(cols))
-		ptrs := make([]any, len(cols))
+		values := make([]any, len(columns))
+		ptrs := make([]any, len(columns))
 		for i := range values {
 			ptrs[i] = &values[i]
 		}
@@ -46,8 +48,8 @@ func (db *DataBase) query(query string, args []any) ([]map[string]any, error) {
 			return nil, err
 		}
 
-		row := make(map[string]any, len(cols))
-		for i, col := range cols {
+		row := make(map[string]any, len(columns))
+		for i, col := range columns {
 			v := values[i]
 			if b, ok := v.([]byte); ok {
 				row[col] = core.B2S(b)
@@ -59,4 +61,17 @@ func (db *DataBase) query(query string, args []any) ([]map[string]any, error) {
 	}
 
 	return results, nil
+}
+
+func (db *DataBase) prepare(query string) (*Statement, error) {
+	stmt, err := db.db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Statement{stmt}, nil
+}
+
+func (db *DataBase) close() error {
+	return db.db.Close()
 }

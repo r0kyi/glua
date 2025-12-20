@@ -42,7 +42,7 @@ func (db *DataBase) queryL(L *lua.LState) int {
 	var args []any
 	query := L.CheckString(1)
 	for i := 2; i <= L.GetTop(); i++ {
-		args = append(args, L.CheckString(i))
+		args = append(args, L.CheckAny(i))
 	}
 
 	rows, err := db.query(query, args)
@@ -59,12 +59,43 @@ func (db *DataBase) queryL(L *lua.LState) int {
 	return 2
 }
 
+func (db *DataBase) prepareL(L *lua.LState) int {
+	query := L.CheckString(1)
+	s, err := db.prepare(query)
+	if err != nil {
+		L.Push(lua.LNil)
+		L.Push(lua.LString(err.Error()))
+		return 2
+	}
+
+	L.Push(s)
+	L.Push(lua.LNil)
+
+	return 2
+}
+
+func (db *DataBase) closeL(L *lua.LState) int {
+	err := db.close()
+	if err != nil {
+		L.Push(lua.LString(err.Error()))
+		return 1
+	}
+
+	L.Push(lua.LNil)
+
+	return 1
+}
+
 func (db *DataBase) Index(L *lua.LState, key string) lua.LValue {
 	switch key {
 	case "exec":
 		return L.NewFunction(db.execL)
 	case "query":
 		return L.NewFunction(db.queryL)
+	case "prepare":
+		return L.NewFunction(db.prepareL)
+	case "close":
+		return L.NewFunction(db.closeL)
 	default:
 		return lua.LNil
 	}

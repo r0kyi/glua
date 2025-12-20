@@ -4,6 +4,48 @@
 
 glua 基于 [gopher-lua](https://github.com/r0kyi/gopher-lua) 二次开发，在原版基础上新增了许多模块
 
+## 安装
+
+```bash
+go get github.com/r0kyi/glua
+```
+
+## 使用
+
+直接安装二进制版本
+
+```bash
+go install github.com/r0kyi/glua/cmd/glua@latest
+```
+
+在 go 代码中使用
+
+```lua
+package main
+
+import (
+	"os"
+
+	"github.com/r0kyi/glua"
+)
+
+func main() {
+	L := glua.NewState()
+	defer L.Close()
+
+	args := os.Args
+	if len(args) < 2 {
+		println("usage: glua <lua file>")
+		return
+	}
+
+	if err := L.DoFile(args[1]); err != nil {
+		println(err.Error())
+	}
+}
+
+```
+
 ## 模块列表
 
 | 模块名称                     | 模块介绍     |
