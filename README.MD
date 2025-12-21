@@ -16,6 +16,7 @@ go get github.com/r0kyi/glua
 
 ```bash
 go install github.com/r0kyi/glua/cmd/glua@latest
+glua <lua file>
 ```
 
 在 go 代码中使用
@@ -48,21 +49,22 @@ func main() {
 
 ## 模块列表
 
-| 模块名称                     | 模块介绍     |
-| ---------------------------- | ------------ |
-| [base](docs/base.md)         | base 编解码  |
-| [cron](docs/cron.md)         | 计划任务     |
-| [crypto](docs/crypto.md)     | 加解密       |
-| [database](docs/database.md) | 数据库连接   |
-| [format](docs/format.md)     | 格式化字符串 |
-| [http](docs/http.md)         | http 请求    |
-| [json](docs/json.md)         | json 解析    |
-| [jwt](docs/jwt.md)           | jwt 解析     |
-| [re](docs/re.md)             | 正则         |
-| [time](docs/time.md)         | 时间         |
-| [web](docs/web.md)           | web 服务     |
-| [xml](docs/xml.md)           | xml 解析     |
-| [yaml](docs/yaml.md)         | yaml 解析    |
+| 模块名称                     | 模块介绍           |
+| ---------------------------- | ------------------ |
+| [base](docs/base.md)         | base 编解码        |
+| [cron](docs/cron.md)         | 计划任务           |
+| [crypto](docs/crypto.md)     | 加解密             |
+| [database](docs/database.md) | 数据库连接         |
+| [format](docs/format.md)     | 格式化字符串       |
+| [http](docs/http.md)         | http 请求          |
+| [json](docs/json.md)         | json 解析          |
+| [jwt](docs/jwt.md)           | jwt 解析           |
+| [re](docs/re.md)             | 正则               |
+| [time](docs/time.md)         | 时间               |
+| [uuid](docs/uuid.md)         | 通用唯一识别码模块 |
+| [web](docs/web.md)           | web 服务           |
+| [xml](docs/xml.md)           | xml 解析           |
+| [yaml](docs/yaml.md)         | yaml 解析          |
 
 ## 特别鸣谢
 

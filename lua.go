@@ -11,6 +11,7 @@ import (
 	"github.com/r0kyi/glua/plugin/jwt"
 	"github.com/r0kyi/glua/plugin/re"
 	"github.com/r0kyi/glua/plugin/time"
+	"github.com/r0kyi/glua/plugin/uuid"
 	"github.com/r0kyi/glua/plugin/web"
 	"github.com/r0kyi/glua/plugin/xml"
 	"github.com/r0kyi/glua/plugin/yaml"
@@ -31,6 +32,7 @@ func NewState() *lua.LState {
 	table.RawSetString("jwt", jwt.Preload())
 	table.RawSetString("re", re.Preload())
 	table.RawSetString("time", time.Preload())
+	table.RawSetString("uuid", uuid.Preload())
 	table.RawSetString("web", web.Preload())
 	table.RawSetString("xml", xml.Preload())
 	table.RawSetString("yaml", yaml.Preload())

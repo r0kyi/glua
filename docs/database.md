@@ -11,7 +11,7 @@
 
 | 参数名称         | 参数类型 | 备注                                                         |
 | ---------------- | -------- | ------------------------------------------------------------ |
-| driver_name      | string   | 驱动名，必须，可选值<br />mysql<br />pgx<br />sqlserver<br />sqlite |
+| driver_name      | string   | 驱动名，必须，可选值：<br />mysql<br />pgx<br />sqlserver<br />sqlite |
 | data_source_name | string   | 数据源名称，必须                                             |
 
 **返回值**
