@@ -57,6 +57,7 @@ func main() {
 | [database](docs/database.md)   | 数据库连接     |
 | [format](docs/format.md)       | 格式化字符串   |
 | [http](docs/http.md)           | http 请求      |
+| [ini](docs/ini.md)             | ini 配置       |
 | [json](docs/json.md)           | json 解析      |
 | [jwt](docs/jwt.md)             | jwt 解析       |
 | [re](docs/re.md)               | 正则           |

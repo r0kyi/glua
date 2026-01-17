@@ -7,6 +7,7 @@ import (
 	"github.com/r0kyi/glua/plugin/database"
 	"github.com/r0kyi/glua/plugin/format"
 	"github.com/r0kyi/glua/plugin/http"
+	"github.com/r0kyi/glua/plugin/ini"
 	"github.com/r0kyi/glua/plugin/json"
 	"github.com/r0kyi/glua/plugin/jwt"
 	"github.com/r0kyi/glua/plugin/re"
@@ -29,6 +30,7 @@ func NewState() *lua.LState {
 	table.RawSetString("database", database.Preload())
 	table.RawSetString("format", format.Preload())
 	table.RawSetString("http", http.Preload())
+	table.RawSetString("ini", ini.Preload())
 	table.RawSetString("json", json.Preload())
 	table.RawSetString("jwt", jwt.Preload())
 	table.RawSetString("re", re.Preload())
