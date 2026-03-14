@@ -23,20 +23,20 @@ func (x *Xml) encodeL(L *lua.LState) int {
 	xml := L.CheckTable(1)
 	xml_, err := core.LTableToMap[any](xml)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	raw, err := x.encode(xml_)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(lua.LString(raw))
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -46,13 +46,13 @@ func (x *Xml) decodeL(L *lua.LState) int {
 
 	xml, err := x.decode(raw)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(core.MapToLTable(L, xml))
-	L.Push(lua.LNil)
 
 	return 2
 }

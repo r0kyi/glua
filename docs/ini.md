@@ -14,20 +14,20 @@ ini 配置
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| cfg      | table    | 配置       |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注                                                         |
+| -------- | -------- | ------------------------------------------------------------ |
+| ok       | boolean  | 函数是否执行成功                                             |
+| cfg      | table    | 函数执行成功时返回 **配置**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
 ```lua
 local ini = glua.ini
 
-local cfg, err = ini.load("cfg.ini")
+local ok, cfg = ini.load("cfg.ini")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(cfg)
     return
 end
 
@@ -59,9 +59,10 @@ port = 3306
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result | string   | 错误信息       |
 
 **demo**
 
@@ -79,10 +80,10 @@ local cfg = {
     }
 }
 
-local err = ini.save("cfg.ini", cfg)
+local ok, result = ini.save("cfg.ini", cfg)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 ```

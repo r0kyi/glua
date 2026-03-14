@@ -15,9 +15,10 @@
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
@@ -26,12 +27,12 @@ local cron = glua.cron
 
 local c = cron()
 
-local err = c.job("*/1 * * * *", function()
+local ok, result = c.job("*/1 * * * *", function()
     print("hello")
 end)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 
@@ -51,9 +52,10 @@ c.start_block()
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
@@ -62,12 +64,12 @@ local cron = glua.cron
 
 local c = cron()
 
-local err = c.seconds(1, function()
+local ok, result = c.seconds(1, function()
     print("hello")
 end)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 
@@ -87,9 +89,10 @@ c.start_block()
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
@@ -98,12 +101,12 @@ local cron = glua.cron
 
 local c = cron()
 
-local err = c.minutes(1, function()
+local ok, result = c.minutes(1, function()
     print("hello")
 end)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 
@@ -123,9 +126,10 @@ c.start_block()
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
@@ -134,12 +138,12 @@ local cron = glua.cron
 
 local c = cron()
 
-local err = c.hours(1, function()
+local ok, result = c.hours(1, function()
     print("hello")
 end)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 
@@ -159,9 +163,10 @@ c.start_block()
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
@@ -170,12 +175,12 @@ local cron = glua.cron
 
 local c = cron()
 
-local err = c.days(1, function()
+local ok, result = c.days(1, function()
     print("hello")
 end)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 
@@ -195,9 +200,10 @@ c.start_block()
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
@@ -206,12 +212,12 @@ local cron = glua.cron
 
 local c = cron()
 
-local err = c.weeks(1, function()
+local ok, result = c.weeks(1, function()
     print("hello")
 end)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 
@@ -231,12 +237,12 @@ local cron = glua.cron
 
 local c = cron()
 
-local err = c.seconds(1, function()
+local ok, result = c.seconds(1, function()
     print("hello")
 end)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 
@@ -254,12 +260,12 @@ local cron = glua.cron
 
 local c = cron()
 
-local err = c.seconds(1, function()
+local ok, result = c.seconds(1, function()
     print("hello")
 end)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
     return
 end
 

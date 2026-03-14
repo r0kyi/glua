@@ -96,15 +96,15 @@ func newReL(L *lua.LState) int {
 	pattern := L.CheckString(1)
 	compiled, err := regexp.Compile(pattern)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	r.regexp = compiled
 
+	L.Push(lua.LTrue)
 	L.Push(r)
-	L.Push(lua.LNil)
 
 	return 2
 }

@@ -14,18 +14,18 @@
 
 | 参数名称 | 参数类型 | 备注               |
 | -------- | -------- | ------------------ |
-| regexp   | object | 编译后的正则表达式 |
-| err      | string   | 错误返回值         |
+| ok | boolean | 函数是否执行成功 |
+| regexp   | object | 函数执行成功时返回 **编译后的正则表达式**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
 ```lua
 local re = glua.re
 
-local r, err = re("\\d+")
+local ok, r = re("\\d+")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(r)
     return
 end
 
@@ -57,10 +57,10 @@ print(r.match("re"))
 ```lua
 local re = glua.re
 
-local r, err = re("\\d+")
+local ok, r = re("\\d+")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(r)
     return
 end
 
@@ -92,10 +92,10 @@ print(r.match("re"))
 ```lua
 local re = glua.re
 
-local r, err = re("\\d+")
+local ok, r = re("\\d+")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(r)
     return
 end
 
@@ -127,10 +127,10 @@ print(r.find("re123"))
 ```lua
 local re = glua.re
 
-local r, err = re("\\d+")
+local ok, r = re("\\d+")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(r)
     return
 end
 
@@ -165,10 +165,10 @@ end
 ```lua
 local re = glua.re
 
-local r, err = re("\\d+")
+local ok, r = re("\\d+")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(r)
     return
 end
 
@@ -198,10 +198,10 @@ print(r.replace("123re456", "re"))
 ```lua
 local re = glua.re
 
-local r, err = re("\\d+")
+local ok, r = re("\\d+")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(r)
     return
 end
 

@@ -23,20 +23,20 @@ func (y *Yaml) encodeL(L *lua.LState) int {
 	yaml := L.CheckTable(1)
 	yaml_, err := core.LTableToMap[any](yaml)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	raw, err := y.encode(yaml_)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(lua.LString(raw))
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -46,13 +46,13 @@ func (y *Yaml) decodeL(L *lua.LState) int {
 
 	yaml, err := y.decode(raw)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(core.MapToLTable(L, yaml))
-	L.Push(lua.LNil)
 
 	return 2
 }

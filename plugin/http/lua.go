@@ -24,7 +24,7 @@ func (h *Http) AssertFunction() (*lua.LFunction, bool) {
 func (h *Http) getL(L *lua.LState) int {
 	url, args, _, err := getParams(L)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
@@ -32,13 +32,13 @@ func (h *Http) getL(L *lua.LState) int {
 	r, err := h.get(url, args)
 
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(r)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -46,20 +46,20 @@ func (h *Http) getL(L *lua.LState) int {
 func (h *Http) postL(L *lua.LState) int {
 	url, args, body, err := getParams(L)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	r, err := h.post(url, args, body)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(r)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -67,20 +67,20 @@ func (h *Http) postL(L *lua.LState) int {
 func (h *Http) putL(L *lua.LState) int {
 	url, args, body, err := getParams(L)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	r, err := h.put(url, args, body)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(r)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -88,20 +88,20 @@ func (h *Http) putL(L *lua.LState) int {
 func (h *Http) deleteL(L *lua.LState) int {
 	url, args, body, err := getParams(L)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	r, err := h.delete(url, args, body)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(r)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -109,20 +109,20 @@ func (h *Http) deleteL(L *lua.LState) int {
 func (h *Http) patchL(L *lua.LState) int {
 	url, args, body, err := getParams(L)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	r, err := h.patch(url, args, body)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(r)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -130,20 +130,20 @@ func (h *Http) patchL(L *lua.LState) int {
 func (h *Http) optionsL(L *lua.LState) int {
 	url, args, _, err := getParams(L)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	r, err := h.options(url, args)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(r)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -151,20 +151,20 @@ func (h *Http) optionsL(L *lua.LState) int {
 func (h *Http) headL(L *lua.LState) int {
 	url, args, _, err := getParams(L)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	r, err := h.head(url, args)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(r)
-	L.Push(lua.LNil)
 
 	return 2
 }

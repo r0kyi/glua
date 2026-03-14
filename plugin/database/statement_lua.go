@@ -27,14 +27,14 @@ func (s *Statement) queryL(L *lua.LState) int {
 
 	rows, err := s.query(args)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	tbl := core.MapToLTable(L, rows)
+	L.Push(lua.LTrue)
 	L.Push(tbl)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -42,11 +42,12 @@ func (s *Statement) queryL(L *lua.LState) int {
 func (s *Statement) closeL(L *lua.LState) int {
 	err := s.close()
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-		return 1
+		return 2
 	}
 
-	L.Push(lua.LNil)
+	L.Push(lua.LTrue)
 
 	return 1
 }

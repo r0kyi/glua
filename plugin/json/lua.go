@@ -25,13 +25,13 @@ func (j *Json) encodeL(L *lua.LState) int {
 
 	raw, err := j.encode(json_)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(lua.LString(raw))
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -41,13 +41,13 @@ func (j *Json) decodeL(L *lua.LState) int {
 
 	json, err := j.decode(raw)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(core.MapToLTable(L, json))
-	L.Push(lua.LNil)
 
 	return 2
 }

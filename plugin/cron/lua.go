@@ -27,10 +27,12 @@ func (c *Cron) jobL(L *lua.LState) int {
 
 	err := c.job(cronExpression, toJobFun(L, fn))
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-	} else {
-		L.Push(lua.LNil)
+		return 2
 	}
+
+	L.Push(lua.LTrue)
 
 	return 1
 }
@@ -41,10 +43,12 @@ func (c *Cron) secondsL(L *lua.LState) int {
 
 	err := c.seconds(int(interval), toJobFun(L, fn))
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-	} else {
-		L.Push(lua.LNil)
+		return 2
 	}
+
+	L.Push(lua.LTrue)
 
 	return 1
 }
@@ -55,10 +59,12 @@ func (c *Cron) minutesL(L *lua.LState) int {
 
 	err := c.minutes(int(interval), toJobFun(L, fn))
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-	} else {
-		L.Push(lua.LNil)
+		return 2
 	}
+
+	L.Push(lua.LTrue)
 
 	return 1
 }
@@ -69,10 +75,12 @@ func (c *Cron) hoursL(L *lua.LState) int {
 
 	err := c.hours(int(interval), toJobFun(L, fn))
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-	} else {
-		L.Push(lua.LNil)
+		return 2
 	}
+
+	L.Push(lua.LTrue)
 
 	return 1
 }
@@ -83,10 +91,12 @@ func (c *Cron) daysL(L *lua.LState) int {
 
 	err := c.days(int(interval), toJobFun(L, fn))
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-	} else {
-		L.Push(lua.LNil)
+		return 2
 	}
+
+	L.Push(lua.LTrue)
 
 	return 1
 }
@@ -97,10 +107,12 @@ func (c *Cron) weeksL(L *lua.LState) int {
 
 	err := c.weeks(int(interval), toJobFun(L, fn))
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-	} else {
-		L.Push(lua.LNil)
+		return 2
 	}
+
+	L.Push(lua.LTrue)
 
 	return 1
 }

@@ -16,8 +16,8 @@ xml 解析模块
 
 | 参数名称 | 参数类型 | 备注             |
 | -------- | -------- | ---------------- |
-| raw      | string   | 转化之后的字符串 |
-| err      | string   | 错误返回值       |
+| ok | boolean | 函数是否执行成功 |
+| raw      | string   | 函数执行成功时返回 **转化之后的字符串**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -33,10 +33,10 @@ local x = {
     }
 }
 
-local raw, err = xml.encode(x)
+local ok, raw = xml.encode(x)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(raw)
     return
 end
 
@@ -57,8 +57,8 @@ print(raw)
 
 | 参数名称 | 参数类型 | 备注         |
 | -------- | -------- | ------------ |
-| xml      | table    | 转化之后的表 |
-| err      | string   | 错误返回值   |
+| ok | boolean | 函数是否执行成功 |
+| xml      | table    | 函数执行成功时返回 **转化之后的表**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -75,10 +75,10 @@ local raw = [[
 </note>
 ]]
 
-local x, err = xml.decode(raw)
+local ok, x = xml.decode(raw)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(x)
     return
 end
 

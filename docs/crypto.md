@@ -24,11 +24,11 @@ aes 加密
 
 **返回值**
 
-| 参数名称   | 参数类型 | 备注                  |
-| ---------- | -------- | --------------------- |
-| ciphertext | string   | 密文                  |
-| tag        | string   | 只有 **gcm** 模式返回 |
-| err        | string   | 错误返回值            |
+| 参数名称   | 参数类型 | 备注                       |
+| ---------- | -------- | -------------------------- |
+| ok         | boolean  | 函数是否执行成功           |
+| ciphertext | string   | 函数执行成功时返回 **密文**，函数执行失败时返回 **错误信息** |
+| tag        | string   | 只有 **gcm** 模式返回      |
 
 ### decrypt
 
@@ -38,15 +38,15 @@ aes 解密
 
 | 参数名称   | 参数类型 | 备注                  |
 | ---------- | -------- | --------------------- |
-| ciphertext | string   | 明文，必须            |
+| ciphertext | string   | 密文，必须            |
 | tag        | string   | 只有 **gcm** 模式需要 |
 
 **返回值**
 
-| 参数名称  | 参数类型 | 备注       |
-| --------- | -------- | ---------- |
-| plaintext | string   | 密文       |
-| err       | string   | 错误返回值 |
+| 参数名称  | 参数类型 | 备注                       |
+| --------- | -------- | -------------------------- |
+| ok        | boolean  | 函数是否执行成功           |
+| plaintext | string   | 函数执行成功时返回 **明文**，函数执行失败时返回 **错误信息** |
 
 **demo-cbc**
 
@@ -59,14 +59,14 @@ local a = aes{
     mode = "cbc",
 }
 
-local c, err = a.encrypt("123456")
-if err ~= nil then
-    print(err)
+local ok, c = a.encrypt("123456")
+if not ok then
+    print(c)
 end
 
-local p, err = a.decrypt(c)
-if err ~= nil then
-    print(err)
+local ok, p = a.decrypt(c)
+if not ok then
+    print(p)
 end
 
 print(string.format("%02x", c))
@@ -87,14 +87,14 @@ local a = aes{
     mode = "cfb",
 }
 
-local c, err = a.encrypt("123456")
-if err ~= nil then
-    print(err)
+local ok, c = a.encrypt("123456")
+if not ok then
+    print(c)
 end
 
-local p, err = a.decrypt(c)
-if err ~= nil then
-    print(err)
+local ok, p = a.decrypt(c)
+if not ok then
+    print(p)
 end
 
 print(string.format("%02x", c))
@@ -115,14 +115,14 @@ local a = aes{
     mode = "ofb",
 }
 
-local c, err = a.encrypt("123456")
-if err ~= nil then
-    print(err)
+local ok, c = a.encrypt("123456")
+if not ok then
+    print(c)
 end
 
-local p, err = a.decrypt(c)
-if err ~= nil then
-    print(err)
+local ok, p = a.decrypt(c)
+if not ok then
+    print(p)
 end
 
 print(string.format("%02x", c))
@@ -143,14 +143,14 @@ local a = aes{
     mode = "ctr",
 }
 
-local c, err = a.encrypt("123456")
-if err ~= nil then
-    print(err)
+local ok, c = a.encrypt("123456")
+if not ok then
+    print(c)
 end
 
-local p, err = a.decrypt(c)
-if err ~= nil then
-    print(err)
+local ok, p = a.decrypt(c)
+if not ok then
+    print(p)
 end
 
 print(string.format("%02x", c))
@@ -172,14 +172,14 @@ local a = aes{
     aad = "123456",
 }
 
-local c, tag, err = a.encrypt("123456")
-if err ~= nil then
-    print(err)
+local ok, c, tag = a.encrypt("123456")
+if not ok then
+    print(c)
 end
 
-local p, err = a.decrypt(c, tag)
-if err ~= nil then
-    print(err)
+local ok, p = a.decrypt(c, tag)
+if not ok then
+    print(p)
 end
 
 print(string.format("%02x", c))
@@ -202,14 +202,14 @@ local a = aes{
     mode = "ecb",
 }
 
-local c, err = a.encrypt("123456")
-if err ~= nil then
-    print(err)
+local ok, c = a.encrypt("123456")
+if not ok then
+    print(c)
 end
 
-local p, err = a.decrypt(c)
-if err ~= nil then
-    print(err)
+local ok, p = a.decrypt(c)
+if not ok then
+    print(p)
 end
 
 print(string.format("%02x", c))

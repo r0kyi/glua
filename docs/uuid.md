@@ -14,53 +14,60 @@
 
 | 参数名称 | 参数类型 | 备注        |
 | -------- | -------- | ----------- |
-| uuid     | string   | uuid 字符串 |
-| err      | string   | 错误返回值  |
+| ok | boolean | 函数是否执行成功 |
+| uuid     | string   | 函数执行成功时返回 **uuid 字符串**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
 ```lua
 local uuid = glua.uuid
 
-local u1, err = uuid("v1")
-if err ~= nil then
-    print("v1 err:", err)
+local ok, u1 = uuid("v1")
+if not ok then
+    print("v1 err:", u1)
+    return
 end
 print("v1: ", u1)
 
-local u3, err = uuid("v3", "6ba7b810-9dad-11d1-80b4-00c04fd430c8", "user:10001")
-if err ~= nil then
-    print("v3 err:", err)
+local ok, u3 = uuid("v3", "6ba7b810-9dad-11d1-80b4-00c04fd430c8", "user:10001")
+if not ok then
+    print("v3 err:", u3)
+    return
 end
 print("v3: ", u3)
 
-local u4, err = uuid("v4")
-if err ~= nil then
-    print("v4 err:", err)
+local ok, u4 = uuid("v4")
+if not ok then
+    print("v4 err:", u4)
+    return
 end
 print("v4: ", u4)
 
-local u5, err = uuid("v5", "6ba7b810-9dad-11d1-80b4-00c04fd430c8", "user:10001")
-if err ~= nil then
-    print("v5 err:", err)
+local ok, u5 = uuid("v5", "6ba7b810-9dad-11d1-80b4-00c04fd430c8", "user:10001")
+if not ok then
+    print("v5 err:", u5)
+    return
 end
 print("v5: ", u5)
 
-local u6, err = uuid("v6")
-if err ~= nil then
-    print("v6 err:", err)
+local ok, u6 = uuid("v6")
+if not ok then
+    print("v6 err:", u6)
+    return
 end
 print("v6: ", u6)
 
-local u7, err = uuid("v7")
-if err ~= nil then
-    print("v7 err:", err)
+local ok, u7 = uuid("v7")
+if not ok then
+    print("v7 err:", u7)
+    return
 end
 print("v7: ", u7)
 
-local u, err = uuid()
-if err ~= nil then
-    print("v4 err:", err)
+local ok, u = uuid()
+if not ok then
+    print("v4 err:", u)
+    return
 end
 print("v4: ", u)
 ```

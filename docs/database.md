@@ -16,23 +16,24 @@
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| db       | object   | 数据库     |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注                         |
+| -------- | -------- | ---------------------------- |
+| ok       | boolean  | 函数是否执行成功             |
+| db       | object   | 函数执行成功时返回 **数据库**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
 ```lua
 local database = glua.database
 
-local db, err = database{
+local ok, db = database{
     driver_name = "mysql",
     data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
 }
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(db)
+    return
 end
 ```
 
@@ -49,28 +50,31 @@ end
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
 ```lua
 local database = glua.database
 
-local db, err = database{
+local ok, db = database{
     driver_name = "mysql",
     data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
 }
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(db)
+    return
 end
 
-local err = db.exec("INSERT INTO `users` (`username`, `password`) VALUES (?, ?)", "tom", "xxxx")
+local ok, result = db.exec("INSERT INTO `users` (`username`, `password`) VALUES (?, ?)", "tom", "xxxx")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(result)
+    return
 end
 ```
 
@@ -87,28 +91,30 @@ end
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注               |
-| -------- | -------- | ------------------ |
-| rows     | table    | sql 语句查询返回值 |
-| err      | string   | 错误返回值         |
+| 参数名称 | 参数类型 | 备注                                                         |
+| -------- | -------- | ------------------------------------------------------------ |
+| ok       | boolean  | 函数是否执行成功                                             |
+| rows     | table    | 函数执行成功时返回  **sql 语句查询返回值**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
 ```lua
 local database = glua.database
 
-local db, err = database{
+local ok, db = database{
     driver_name = "mysql",
     data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
 }
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(db)
+    return
 end
 
-local rows, err = db.query("SELECT * FROM `users` WHERE `id` = ?;", 1)
-if err ~= nil then
-    print(err)
+local ok, rows = db.query("SELECT * FROM `users` WHERE `id` = ?;", 1)
+if not ok then
+    print(rows)
+    return
 end
 print(rows[1]["username"])
 ```
@@ -125,37 +131,38 @@ print(rows[1]["username"])
 
 **返回值**
 
-| 参数名称  | 参数类型 | 备注              |
-| --------- | -------- | ----------------- |
-| statement | object   | 预编译 sql 的封装 |
-| err       | string   | 错误返回值        |
+| 参数名称  | 参数类型 | 备注                                    |
+| --------- | -------- | --------------------------------------- |
+| ok        | boolean  | 函数是否执行成功                        |
+| statement | object   | 函数执行成功时返回 **预编译 sql 的封装**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
 ```lua
 local database = glua.database
 
-local db, err = database{
+local ok, db = database{
     driver_name = "mysql",
     data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
 }
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(db)
     return
 end
 
-local stmt, err = db.prepare("SELECT * FROM `users` WHERE `id` = ?;")
-if err ~= nil then
-    print(err)
+local ok, stmt = db.prepare("SELECT * FROM `users` WHERE `id` = ?;")
+if not ok then
+    print(stmt)
     return
 end
 
-local rows, err = stmt.query(1)
-if err ~= nil then
-    print(err)
+local ok, rows = stmt.query(1)
+if not ok then
+    print(rows)
     return
 end
+stmt.close()
 
 print(rows[1]["username"])
 
@@ -168,21 +175,25 @@ db.close()
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
 ```lua
 local database = glua.database
 
-local db, err = database{
+local ok, db = database{
     driver_name = "mysql",
     data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
 }
 
-local err = db.close()
+local ok, result = db.close()
+if not ok then
+    print(result)
+end
 ```
 
 ## statement
@@ -199,40 +210,41 @@ local err = db.close()
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注               |
-| -------- | -------- | ------------------ |
-| rows     | table    | sql 语句查询返回值 |
-| err      | string   | 错误返回值         |
+| 参数名称 | 参数类型 | 备注                                                         |
+| -------- | -------- | ------------------------------------------------------------ |
+| ok       | boolean  | 函数是否执行成功                                             |
+| rows     | table    | 函数执行成功时返回  **sql 语句查询返回值**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
 ```lua
 local database = glua.database
 
-local db, err = database{
+local ok, db = database{
     driver_name = "mysql",
     data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
 }
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(db)
     return
 end
 
-local stmt, err = db.prepare("SELECT * FROM `users` WHERE `id` = ?;")
-if err ~= nil then
-    print(err)
+local ok, stmt = db.prepare("SELECT * FROM `users` WHERE `id` = ?;")
+if not ok then
+    print(stmt)
     return
 end
 
-local rows, err = stmt.query(1)
-if err ~= nil then
-    print(err)
+local ok, rows = stmt.query(1)
+if not ok then
+    print(rows)
     return
 end
 stmt.close()
 
 print(rows[1]["username"])
+
 db.close()
 ```
 
@@ -242,38 +254,45 @@ db.close()
 
 **返回值**
 
-| 参数名称 | 参数类型 | 备注       |
-| -------- | -------- | ---------- |
-| err      | string   | 错误返回值 |
+| 参数名称 | 参数类型 | 备注             |
+| -------- | -------- | ---------------- |
+| ok       | boolean  | 函数是否执行成功 |
+| result   | string   | 错误信息       |
 
 **demo**
 
 ```lua
 local database = glua.database
 
-local db, err = database{
+local ok, db = database{
     driver_name = "mysql",
     data_source_name = "root:password@tcp(127.0.0.1:3306)/testdb"
 }
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(db)
     return
 end
 
-local stmt, err = db.prepare("SELECT * FROM `users` WHERE `id` = ?;")
-if err ~= nil then
-    print(err)
+local ok, stmt = db.prepare("SELECT * FROM `users` WHERE `id` = ?;")
+if not ok then
+    print(stmt)
     return
 end
 
-local rows, err = stmt.query(1)
-if err ~= nil then
-    print(err)
+local ok, rows = stmt.query(1)
+if not ok then
+    print(rows)
     return
 end
-local err = stmt.close()
+
+local ok, result = stmt.close()
+if not ok then
+    print(result)
+    return
+end
 
 print(rows[1]["username"])
+
 db.close()
 ```

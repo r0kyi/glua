@@ -26,20 +26,20 @@ func (j *Jwt) signL(L *lua.LState) int {
 
 	jwt_, err := core.LTableToMap[any](jwt)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	raw, err := j.sign(key, alg, jwt_)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(lua.LString(raw))
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -50,13 +50,13 @@ func (j *Jwt) verifyL(L *lua.LState) int {
 
 	jwt, err := j.verify(key, raw)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(core.MapToLTable(L, jwt))
-	L.Push(lua.LNil)
 
 	return 2
 }

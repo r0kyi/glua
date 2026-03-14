@@ -52,8 +52,8 @@ get 请求
 
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
-| response | object   | 请求响应，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string |
-| err      | string   | 错误返回值                                                   |
+| ok       | boolean  | 函数是否执行成功                                             |
+| response | object   | 函数执行成功时返回 **请求响应**，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string<br />函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -78,10 +78,10 @@ local args = {
     ["password"] = "password",
 }
 
-local response, err = h.get("https://www.example.com", args)
+local ok, response = h.get("https://www.example.com", args)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(response)
     return
 end
 
@@ -94,7 +94,6 @@ for k, v in pairs(response.headers) do
 end
 
 print(response.body)
-
 ```
 
 ## post
@@ -113,8 +112,8 @@ post 请求
 
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
-| response | object   | 请求响应，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string |
-| err      | string   | 错误返回值                                                   |
+| ok       | boolean  | 函数是否执行成功                                             |
+| response | object   | 函数执行成功时返回 **请求响应**，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string<br />函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -139,10 +138,10 @@ local args = {
     ["password"] = "password",
 }
 
-local response, err = h.post("https://www.example.com", args, "username=username&password=password&code=123456")
+local ok, response = h.post("https://www.example.com", args, "username=username&password=password&code=123456")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(response)
     return
 end
 
@@ -155,7 +154,6 @@ for k, v in pairs(response.headers) do
 end
 
 print(response.body)
-
 ```
 
 ## put
@@ -174,8 +172,8 @@ put 请求
 
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
-| response | object   | 请求响应，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string |
-| err      | string   | 错误返回值                                                   |
+| ok       | boolean  | 函数是否执行成功                                             |
+| response | object   | 函数执行成功时返回 **请求响应**，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string<br />函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -200,10 +198,10 @@ local args = {
     ["password"] = "password",
 }
 
-local response, err = h.put("https://www.example.com", args, "username=username&password=password&code=123456")
+local ok, response = h.put("https://www.example.com", args, "username=username&password=password&code=123456")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(response)
     return
 end
 
@@ -216,7 +214,6 @@ for k, v in pairs(response.headers) do
 end
 
 print(response.body)
-
 ```
 
 ## delete
@@ -235,8 +232,8 @@ delete 请求
 
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
-| response | object   | 请求响应，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string |
-| err      | string   | 错误返回值                                                   |
+| ok       | boolean  | 函数是否执行成功                                             |
+| response | object   | 函数执行成功时返回 **请求响应**，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string<br />函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -261,10 +258,10 @@ local args = {
     ["password"] = "password",
 }
 
-local response, err = h.delete("https://www.example.com", args, "username=username&password=password&code=123456")
+local ok, response = h.delete("https://www.example.com", args, "username=username&password=password&code=123456")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(response)
     return
 end
 
@@ -277,7 +274,6 @@ for k, v in pairs(response.headers) do
 end
 
 print(response.body)
-
 ```
 
 ## patch
@@ -296,8 +292,8 @@ patch 请求
 
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
-| response | object   | 请求响应，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string |
-| err      | string   | 错误返回值                                                   |
+| ok       | boolean  | 函数是否执行成功                                             |
+| response | object   | 函数执行成功时返回 **请求响应**，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />3. body: 响应体，string<br />函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -322,10 +318,10 @@ local args = {
     ["password"] = "password",
 }
 
-local response, err = h.patch("https://www.example.com", args, "username=username&password=password&code=123456")
+local ok, response = h.patch("https://www.example.com", args, "username=username&password=password&code=123456")
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(response)
     return
 end
 
@@ -338,7 +334,6 @@ for k, v in pairs(response.headers) do
 end
 
 print(response.body)
-
 ```
 
 ## options
@@ -356,8 +351,8 @@ options 请求
 
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
-| response | object   | 请求响应，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table |
-| err      | string   | 错误返回值                                                   |
+| ok       | boolean  | 函数是否执行成功                                             |
+| response | object   | 函数执行成功时返回 **请求响应**，共有两个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -382,10 +377,10 @@ local args = {
     ["password"] = "password",
 }
 
-local response, err = h.options("https://www.example.com", args)
+local ok, response = h.options("https://www.example.com", args)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(response)
     return
 end
 
@@ -396,9 +391,6 @@ for k, v in pairs(response.headers) do
         print(k, vv)
     end
 end
-
-print(response.body)
-
 ```
 
 ## head
@@ -416,8 +408,8 @@ head 请求
 
 | 参数名称 | 参数类型 | 备注                                                         |
 | -------- | -------- | ------------------------------------------------------------ |
-| response | object   | 请求响应，共有三个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table |
-| err      | string   | 错误返回值                                                   |
+| ok       | boolean  | 函数是否执行成功                                             |
+| response | object   | 函数执行成功时返回 **请求响应**，共有两个属性<br />1. status_code: 响应码，int<br />2. headers: 响应头，table<br />函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -442,10 +434,10 @@ local args = {
     ["password"] = "password",
 }
 
-local response, err = h.head("https://www.example.com", args)
+local ok, response = h.head("https://www.example.com", args)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(response)
     return
 end
 
@@ -456,8 +448,5 @@ for k, v in pairs(response.headers) do
         print(k, vv)
     end
 end
-
-print(response.body)
-
 ```
 

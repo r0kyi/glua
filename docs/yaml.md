@@ -16,8 +16,8 @@ yaml 解析模块
 
 | 参数名称 | 参数类型 | 备注             |
 | -------- | -------- | ---------------- |
-| raw      | string   | 转化之后的字符串 |
-| err      | string   | 错误返回值       |
+| ok | boolean | 函数是否执行成功 |
+| raw      | string   | 函数执行成功时返回 **转化之后的字符串**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -31,10 +31,10 @@ local y = {
         ["1"] = 1,
     }
 }
-local raw, err = yaml.encode(y)
+local ok, raw = yaml.encode(y)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(raw)
     return
 end
 
@@ -55,8 +55,8 @@ print(raw)
 
 | 参数名称 | 参数类型 | 备注         |
 | -------- | -------- | ------------ |
-| yaml     | table    | 转化之后的表 |
-| err      | string   | 错误返回值   |
+| ok | boolean | 函数是否执行成功 |
+| yaml     | table    | 函数执行成功时返回 **转化之后的表**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -74,10 +74,10 @@ xxx:
   "1": 1.0
 ]]
 
-local y, err = yaml.decode(raw)
+local ok, y = yaml.decode(raw)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(y)
     return
 end
 

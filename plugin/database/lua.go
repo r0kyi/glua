@@ -29,11 +29,12 @@ func (db *DataBase) execL(L *lua.LState) int {
 
 	err := db.exec(query, args)
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-		return 1
+		return 2
 	}
 
-	L.Push(lua.LNil)
+	L.Push(lua.LTrue)
 
 	return 1
 }
@@ -47,14 +48,14 @@ func (db *DataBase) queryL(L *lua.LState) int {
 
 	rows, err := db.query(query, args)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
 	tbl := core.MapToLTable(L, rows)
+	L.Push(lua.LTrue)
 	L.Push(tbl)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -63,13 +64,13 @@ func (db *DataBase) prepareL(L *lua.LState) int {
 	query := L.CheckString(1)
 	s, err := db.prepare(query)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(s)
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -77,11 +78,12 @@ func (db *DataBase) prepareL(L *lua.LState) int {
 func (db *DataBase) closeL(L *lua.LState) int {
 	err := db.close()
 	if err != nil {
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
-		return 1
+		return 2
 	}
 
-	L.Push(lua.LNil)
+	L.Push(lua.LTrue)
 
 	return 1
 }
@@ -109,14 +111,14 @@ func newDataBaseL(L *lua.LState) int {
 
 	db_, err := sql.Open(db.DriverName, db.DataSourceName)
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 	db.db = db_
 
+	L.Push(lua.LTrue)
 	L.Push(db)
-	L.Push(lua.LNil)
 
 	return 2
 }

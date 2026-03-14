@@ -59,13 +59,13 @@ func newUUIDL(L *lua.LState) int {
 	}
 
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(lua.LString(uuid_.String()))
-	L.Push(lua.LNil)
 
 	return 2
 }

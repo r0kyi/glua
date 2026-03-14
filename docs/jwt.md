@@ -18,8 +18,8 @@ jwt 解析模块
 
 | 参数名称 | 参数类型 | 备注             |
 | -------- | -------- | ---------------- |
-| raw      | string   | 转化之后的字符串 |
-| err      | string   | 错误返回值       |
+| ok | boolean | 函数是否执行成功 |
+| raw      | string   | 函数执行成功时返回 **转化之后的字符串**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -32,10 +32,10 @@ local j = {
     ["username"] = "admin"
 }
 
-local raw, err = jwt.sign(key, "HS256", j)
+local ok, raw = jwt.sign(key, "HS256", j)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(raw)
     return
 end
 
@@ -57,8 +57,8 @@ print(raw)
 
 | 参数名称 | 参数类型 | 备注         |
 | -------- | -------- | ------------ |
-| jwt      | table    | 转化之后的表 |
-| err      | string   | 错误返回值   |
+| ok | boolean | 函数是否执行成功 |
+| jwt      | table    | 函数执行成功时返回 **转化之后的表**，函数执行失败时返回 **错误信息** |
 
 **demo**
 
@@ -69,10 +69,10 @@ local key = "0123456789"
 
 local raw = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0.WoMb_yIEbJ2wncbLtNVtqjdsraroEc6wzX_qvvxzAD8"
 
-local j, err = jwt.verify(key, raw)
+local ok, j = jwt.verify(key, raw)
 
-if err ~= nil then
-    print(err)
+if not ok then
+    print(j)
     return
 end
 

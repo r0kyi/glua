@@ -37,15 +37,14 @@ func (a *Aes) encryptL(L *lua.LState) int {
 		var tag string
 		ciphertext, tag, err = a.gcmEncrypt(plaintext)
 		if err != nil {
-			L.Push(lua.LNil)
-			L.Push(lua.LNil)
+			L.Push(lua.LFalse)
 			L.Push(lua.LString(err.Error()))
-			return 3
+			return 2
 		}
 
+		L.Push(lua.LTrue)
 		L.Push(lua.LString(ciphertext))
 		L.Push(lua.LString(tag))
-		L.Push(lua.LNil)
 
 		return 3
 	case "ecb":
@@ -54,13 +53,13 @@ func (a *Aes) encryptL(L *lua.LState) int {
 		err = errors.New("mode: " + a.Mode + " not supported")
 	}
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(lua.LString(ciphertext))
-	L.Push(lua.LNil)
 
 	return 2
 }
@@ -87,13 +86,13 @@ func (a *Aes) decryptL(L *lua.LState) int {
 		err = errors.New("mode: " + a.Mode + " not supported")
 	}
 	if err != nil {
-		L.Push(lua.LNil)
+		L.Push(lua.LFalse)
 		L.Push(lua.LString(err.Error()))
 		return 2
 	}
 
+	L.Push(lua.LTrue)
 	L.Push(lua.LString(plaintext))
-	L.Push(lua.LNil)
 
 	return 2
 }
