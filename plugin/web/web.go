@@ -45,8 +45,12 @@ func (w *Web) head(path string, fn gin.HandlerFunc) {
 	w.engine.HEAD(path, fn)
 }
 
-func (w *Web) use() {
-	w.engine.Use(sessions.Sessions(w.session.Name, *w.session.store))
+func (w *Web) setSession() {
+	w.use(sessions.Sessions(w.session.Name, *w.session.store))
+}
+
+func (w *Web) use(fn gin.HandlerFunc) {
+	w.engine.Use(fn)
 }
 
 func (w *Web) run() error {
@@ -68,7 +72,7 @@ func (w *Web) toHandler(L *lua.LState, fn *lua.LFunction) gin.HandlerFunc {
 			NRet:    0,
 			Protect: true,
 		}, context); err != nil {
-			c.String(500, "")
+			c.String(500, err.Error())
 		}
 	}
 }

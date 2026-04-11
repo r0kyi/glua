@@ -146,6 +146,18 @@ func (c *Context) bodyL() string {
 	return c.body()
 }
 
+func (c *Context) nextL(L *lua.LState) int {
+	c.next()
+
+	return 0
+}
+
+func (c *Context) abortL(L *lua.LState) int {
+	c.abort()
+
+	return 0
+}
+
 func (c *Context) methodL() string {
 	return c.method()
 }
@@ -184,6 +196,10 @@ func (c *Context) Index(L *lua.LState, key string) lua.LValue {
 		return L.NewFunction(c.getParamL)
 	case "body":
 		return lua.LString(c.bodyL())
+	case "next":
+		return L.NewFunction(c.nextL)
+	case "abort":
+		return L.NewFunction(c.abortL)
 	case "method":
 		return lua.LString(c.methodL())
 	case "path":

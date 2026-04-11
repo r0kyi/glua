@@ -83,14 +83,22 @@ func (w *Web) headL(L *lua.LState) int {
 	return 0
 }
 
-func (w *Web) useL(L *lua.LState) int {
+func (w *Web) setSessionL(L *lua.LState) int {
 	session := L.CheckAny(1)
 	if session == nil {
 		return 0
 	}
 
 	w.session = session.(*Session)
-	w.use()
+	w.setSession()
+
+	return 0
+}
+
+func (w *Web) useL(L *lua.LState) int {
+	fn := L.CheckFunction(1)
+
+	w.use(w.toHandler(L, fn))
 
 	return 0
 }
@@ -123,6 +131,8 @@ func (w *Web) Index(L *lua.LState, key string) lua.LValue {
 		return L.NewFunction(w.optionsL)
 	case "head":
 		return L.NewFunction(w.headL)
+	case "set_session":
+		return L.NewFunction(w.setSessionL)
 	case "use":
 		return L.NewFunction(w.useL)
 	case "run":

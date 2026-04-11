@@ -69,6 +69,14 @@ func (c *Context) body() string {
 	return core.B2S(body)
 }
 
+func (c *Context) next() {
+	c.context.Next()
+}
+
+func (c *Context) abort() {
+	c.context.Abort()
+}
+
 func (c *Context) method() string {
 	return c.context.Request.Method
 }

@@ -248,7 +248,9 @@ end)
 r.run()
 ```
 
-## use
+## set_session
+
+中间件，用于在每个请求中创建并绑定 session 对象，让处理函数可以读写用户会话数据
 
 **参数值**
 
@@ -271,12 +273,83 @@ local s = session{
     name = "session"
 }
 
-r.use(s)
+r.set_session(s)
 
 r.get("/:name/:id", function(c)
     s.default(c)
     local name = c.get_param("name")
     local id = c.get_param("id")
+    s.set("name", name)
+    s.set("id", id)
+    s.save()
+    c.json(200, {
+        ["code"] = 0,
+        ["msg"] = "good",
+    })
+end)
+
+r.get("/", function(c)
+    s.default(c)
+    local name = s.get("name")
+    local id = s.get("id")
+    c.json(200, {
+        ["code"] = 0,
+        ["name"] = name,
+        ["id"] = id,
+    })
+end)
+
+r.run()
+```
+
+## use
+
+注册中间件，让每个请求按注册顺序依次执行这些中间件
+
+**参数值**
+
+| 参数名称 | 参数类型 | 备注                                                         |
+| -------- | -------- | ------------------------------------------------------------ |
+| fn       | function | 处理函数，必须<br />参数为 context，类型为 object<br />方法请看下方的 context 部分 |
+
+**demo**
+
+```lua
+local web = glua.web
+local session = glua.web.session
+
+local r = web{
+    addr = "127.0.0.1:8080"
+}
+
+local s = session{
+    keys = {"123456", "1234567890123456"},
+    name = "session"
+}
+
+r.set_session(s)
+
+local function auth(c)
+    s.default(c)
+    if c.path == "/login" then
+        return
+    end
+
+    local name = s.get("name")
+    if name == "" then
+        c.json(401, {
+            ["code"] = -1,
+            ["msg"] = "unauthorized",
+        })
+        c.abort()
+    end
+end
+r.use(auth)
+
+r.post("/login", function(c)
+    s.default(c)
+    local name = c.get_form("name")
+    local id = c.get_form("id")
     s.set("name", name)
     s.set("id", id)
     s.save()
@@ -668,9 +741,85 @@ end)
 r.run()
 ```
 
+### next
+
+执行下一个中间件/处理函数
+
+**demo**
+
+```lua
+local web = glua.web
+
+local r = web{
+    addr = "127.0.0.1:8080"
+}
+
+local function auth(c)
+    c.string(200, "start log...\n")
+    c.next()
+    c.string(200, "end\n")
+end
+
+local function log(c)
+    c.string(200, "log...\n")
+end
+
+r.use(auth)
+r.use(log)
+
+r.get("/", function(c)
+    c.string(200, "index...\n")
+end)
+
+r.run()
+
+-- start log...
+-- log...
+-- index...
+-- end
+```
+
+### abort
+
+停止后续中间件/处理函数执行
+
+**demo**
+
+```lua
+local web = glua.web
+
+local r = web{
+    addr = "127.0.0.1:8080"
+}
+
+local function auth(c)
+    c.string(200, "start log...\n")
+    c.abort()
+    c.string(200, "end\n")
+end
+
+local function log(c)
+    c.string(200, "log...\n")
+end
+
+r.use(auth)
+r.use(log)
+
+r.get("/", function(c)
+    c.string(200, "index...\n")
+end)
+
+r.run()
+
+-- start log...
+-- end
+```
+
 ### body
 
 请求体
+
+**demo**
 
 ```lua
 local web = glua.web
@@ -690,6 +839,8 @@ r.run()
 
 请求方法
 
+**demo**
+
 ```lua
 local web = glua.web
 
@@ -708,6 +859,8 @@ r.run()
 
 请求路径
 
+**demo**
+
 ```lua
 local web = glua.web
 
@@ -725,6 +878,8 @@ r.run()
 ### uri
 
 完整的请求
+
+**demo**
 
 ```lua
 local web = glua.web
@@ -766,7 +921,7 @@ local s = session{
     name = "session"
 }
 
-r.use(s)
+r.set_session(s)
 ```
 
 ### default
@@ -794,7 +949,7 @@ local s = session{
     name = "session"
 }
 
-r.use(s)
+r.set_session(s)
 
 r.get("/", function(c)
     s.default(c)
@@ -835,7 +990,7 @@ local s = session{
     name = "session"
 }
 
-r.use(s)
+r.set_session(s)
 
 r.get("/", function(c)
     s.default(c)
@@ -873,7 +1028,7 @@ local s = session{
     name = "session"
 }
 
-r.use(s)
+r.set_session(s)
 
 r.get("/", function(c)
     s.default(c)
@@ -910,7 +1065,7 @@ local s = session{
     name = "session"
 }
 
-r.use(s)
+r.set_session(s)
 
 r.get("/", function(c)
     s.default(c)
@@ -939,7 +1094,7 @@ local s = session{
     name = "session"
 }
 
-r.use(s)
+r.set_session(s)
 
 r.get("/", function(c)
     s.default(c)
@@ -968,7 +1123,7 @@ local s = session{
     name = "session"
 }
 
-r.use(s)
+r.set_session(s)
 
 r.get("/", function(c)
     s.default(c)
